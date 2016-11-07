@@ -24,11 +24,12 @@ namespace Cypisek
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-        //    services.AddMvc();
-        //    services.Configure<MvcOptions>(options =>
-        //    {
-        //        options.Filters.Add(new CorsAuthorizationFilterFactory("AllowSpecificOrigin"));
-        //    });
-        //}
+            //    services.AddMvc();
+            //    services.Configure<MvcOptions>(options =>
+            //    {
+            //        options.Filters.Add(new CorsAuthorizationFilterFactory("AllowSpecificOrigin"));
+            //    });
+            //}
+        }
     }
 }
