@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNet.SignalR;
+using SignalRTest;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -45,6 +47,20 @@ namespace Cypisek.Controllers
                 ViewBag.Message = "You have not specified a file.";
             }
             return View();
+        }
+
+        public ActionResult HelloAdmin()
+        {
+            return View();
+        }
+
+        public ActionResult HelloImage()
+        {
+            var context = GlobalHost.ConnectionManager.GetHubContext<HelloTestHub>();
+
+            context.Clients.All.addNewMessageToPage("Ktos", "tu jest");
+            context.Clients.All.setImage("Rumcajs", "https://i.ytimg.com/vi/Qkiqqkz22nw/hqdefault.jpg");
+            return View("HelloAdmin");
         }
     }
 }

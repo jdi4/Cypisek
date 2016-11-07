@@ -20,5 +20,10 @@ namespace SignalRTest
             // Call the addNewMessageToPage method to update clients.
             Clients.All.addNewMessageToPage(name, message);
         }
+
+        public void SendImage(string name, string imgurl)
+        {
+            Clients.All.setImage(name, imgurl);
+        }
     }
 }
