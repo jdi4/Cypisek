@@ -6,6 +6,7 @@ using System.Web;
 using Owin;
 using Microsoft.Owin;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Builder;
 
 [assembly: OwinStartup(typeof(Cypisek.Startup))]
 
@@ -19,9 +20,15 @@ namespace Cypisek
             app.MapSignalR();
         }
 
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCors();
-        }
+        //    services.AddMvc();
+        //    services.Configure<MvcOptions>(options =>
+        //    {
+        //        options.Filters.Add(new CorsAuthorizationFilterFactory("AllowSpecificOrigin"));
+        //    });
+        //}
     }
 }

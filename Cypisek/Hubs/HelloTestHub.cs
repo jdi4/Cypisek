@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Microsoft.AspNet.SignalR;
+using Microsoft.AspNetCore.Cors;
 
 namespace SignalRTest
 {
+    [EnableCors("AllowSpecificOrigin")]
     public class HelloTestHub : Hub
     {
         public void Hello()
