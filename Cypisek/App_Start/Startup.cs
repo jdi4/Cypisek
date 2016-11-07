@@ -5,9 +5,11 @@ using System.Web;
 
 using Owin;
 using Microsoft.Owin;
-[assembly: OwinStartup(typeof(SignalRTest.Startup))]
+using Microsoft.Extensions.DependencyInjection;
 
-namespace SignalRTest
+[assembly: OwinStartup(typeof(Cypisek.Startup))]
+
+namespace Cypisek
 {
     public class Startup
     {
@@ -15,6 +17,11 @@ namespace SignalRTest
         {
             // Any connection or hub wire up and configuration should go here
             app.MapSignalR();
+        }
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddCors();
         }
     }
 }
