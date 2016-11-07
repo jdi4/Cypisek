@@ -76,10 +76,10 @@
             $('#displayname').val(prompt('Enter your name:', ''));
             // Set initial focus to message input box.
             $('#message').focus();
-			$.connection.hub.url = 'http://cypisek.azurewebsites.net'; 
+			$.connection.hub.url = 'http://cypisek.azurewebsites.net/signalr/hubs'; 
             // Start the connection.
-            $.connection.hub.start({ transport: 'webSockets' }).done(function () {
-			console.log('--Connected to Cypisek!, connection ID=' + connection.id); 
+            $.connection.hub.start({ transport: 'webSockets', withCredentials: false }).done(function () {
+			 
                 $('#sendmessage').click(function () {
                     // Call the Send method on the hub.
                     chat.server.send($('#displayname').val(), $('#message').val());
@@ -88,6 +88,7 @@
                 });
             })
 			.fail(function(){ console.log('--Could not connect :('); });
+			
         });
         // This optional function html-encodes messages for display in the page.
         function htmlEncode(value) {
