@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewBag.Title = "FileManager";
+}
+
+<h2>FileManager</h2>
+
+
+
+<h2>Basic File Upload - upload image</h2>
+@using (Html.BeginForm("FileManager",
+                                                            "Admin",
+                                                            FormMethod.Post,
+                                                            new { enctype = "multipart/form-data" }))
+{
+    <label for="file">Upload Image:</label>
+    <input type="file" name="file" id="file" /><br><br>
+    <input type="submit" value="Upload Image" />
+    <br><br>
+    @ViewBag.Message
+}
