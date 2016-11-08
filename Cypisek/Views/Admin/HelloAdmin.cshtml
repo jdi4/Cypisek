@@ -5,16 +5,20 @@
 
 <h2>HelloAdmin</h2>
 
-
-<button class="btn btn-info" type="button"
-        onclick="location.href='@Url.Action("HelloImage","Admin")'"
-        />
-
-    @*@using (Html.BeginForm("HelloAdmin", "Admin", FormMethod.Post))
+<div class="row">
+    <button class="btn btn-info" type="button"
+            onclick="location.href='@Url.Action("HelloImage","Admin")'">
+        Wyświetl
+        </button>
+</div>
+    @using (Html.BeginForm("HelloAdmin", "Admin", FormMethod.Post))
     {
-        <label for="file">Image link</label>
-        <input type="text" name="file" id="file" /><br><br>
+        <label for="name">Image name</label>
+        <input type="text" name="name" id="name" /><br><br>
+        <label for="imageurl">Image link</label>
+        <input type="text" name="imageurl" id="imageurl" /><br><br>
+
         <input type="submit" value="Show Image" />
         <br><br>
         @ViewBag.Message
-    }*@
+    }

@@ -21,8 +21,8 @@ namespace Cypisek.Controllers
 
         public ActionResult FileManager()
         {
-            Directory.EnumerateFiles(imagesStorageDirLocation);
-            return View();
+            var files = Directory.EnumerateFiles(Server.MapPath(imagesStorageDirLocation));
+            return View(files);
         }
 
         [HttpPost]
@@ -33,7 +33,9 @@ namespace Cypisek.Controllers
                 {
                     Directory.CreateDirectory(Server.MapPath(imagesStorageDirLocation)); // only if dirs does not exist
 
-                    string path = Path.Combine(imagesStorageDirLocation,
+                    // assign MapPath result to variable?
+
+                    string path = Path.Combine(Server.MapPath(imagesStorageDirLocation),
                                                Path.GetFileName(file.FileName));
                     file.SaveAs(path);
                     ViewBag.Message = "File uploaded successfully";
@@ -51,6 +53,31 @@ namespace Cypisek.Controllers
 
         public ActionResult HelloAdmin()
         {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult HelloAdmin(string name, string imageurl)
+        {
+            if (name.Length > 0 && imageurl.Length > 0)
+            {
+                try
+                {
+                    var context = GlobalHost.ConnectionManager.GetHubContext<HelloTestHub>();
+                    //tmp
+                    context.Clients.All.addNewMessageToPage(name, imageurl);
+                    context.Clients.All.setImage(name, imageurl);
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = "ERROR:" + ex.Message.ToString();
+                }
+                ViewBag.Message = "Image display request sent.";
+            }
+            else
+            {
+                ViewBag.Message = "You have not specified an image.";
+            }
             return View();
         }
 

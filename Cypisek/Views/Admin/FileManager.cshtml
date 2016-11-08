@@ -5,7 +5,18 @@
 
 <h2>FileManager</h2>
 
-
+@model IEnumerable<string>
+<ul>
+    @foreach (var fullPath in Model)
+    {
+        var fileName = Path.GetFileName(fullPath);
+        <li>@fileName
+    <button class="btn btn-info" type="button"
+            onclick="location.href='@Url.Action("HelloImage","Admin")'">
+        Wyświetl</button>
+</li>
+    }
+</ul>
 
 <h2>Basic File Upload - upload image</h2>
 @using (Html.BeginForm("FileManager",
