@@ -22,7 +22,8 @@ namespace Cypisek.Controllers
         public ActionResult FileManager()
         {
             //var files = Directory.EnumerateFiles(Server.MapPath(imagesStorageDirLocation));
-            return View(files);
+            //return View(files);
+            return View();
         }
 
         [HttpPost]
