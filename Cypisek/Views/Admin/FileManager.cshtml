@@ -5,7 +5,13 @@
 
 <h2>FileManager</h2>
 
-@model IEnumerable<string>
+<p>Test: <br />
+    @ViewData["t1"]
+    <br />
+    @ViewData["filename"]
+    </p>
+
+@*@model IEnumerable<string>
 <ul>
     @foreach (var fullPath in Model)
     {
@@ -16,7 +22,7 @@
         Wyświetl</button>
 </li>
     }
-</ul>
+</ul>*@
 
 <h2>Basic File Upload - upload image</h2>
 @using (Html.BeginForm("FileManager",

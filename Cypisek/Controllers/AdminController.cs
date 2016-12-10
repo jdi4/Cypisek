@@ -21,8 +21,12 @@ namespace Cypisek.Controllers
 
         public ActionResult FileManager()
         {
+            //var files = Directory.EnumerateFiles(Server.MapPath(imagesStorageDirLocation));
+            string test = Server.MapPath(imagesStorageDirLocation);
+            ViewData["t1"] = test;
             var files = Directory.EnumerateFiles(Server.MapPath(imagesStorageDirLocation));
-            return View(files);
+            ViewData["filename"] = files.First();
+            //return View(files);
             return View();
         }
 
