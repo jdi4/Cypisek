@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNet.SignalR;
+﻿using Cypisek.ViewModels;
+using Microsoft.AspNet.SignalR;
 using SignalRTest;
 using System;
 using System.Collections.Generic;
@@ -21,13 +22,24 @@ namespace Cypisek.Controllers
 
         public ActionResult FileManager()
         {
-            //var files = Directory.EnumerateFiles(Server.MapPath(imagesStorageDirLocation));
-            string test = Server.MapPath(imagesStorageDirLocation);
-            ViewData["t1"] = test;
-            var files = Directory.EnumerateFiles(Server.MapPath(imagesStorageDirLocation));
-            ViewData["filename"] = files.First();
-            //return View(files);
-            return View();
+            //init
+            Directory.CreateDirectory(Server.MapPath(imagesStorageDirLocation)); // only if dirs does not exist
+
+            //get data
+            DirectoryInfo dir = new DirectoryInfo(
+                Server.MapPath(imagesStorageDirLocation));
+            var files = dir.GetFiles();
+
+            //mapping ? use AutoMapper instead
+            List<MediaFileViewModel> mediaFiles = new List<MediaFileViewModel>();
+            foreach (FileInfo fi in files)
+            {
+                mediaFiles.Add(
+                    new MediaFileViewModel() { FileName = fi.Name, Bytes = fi.Length }
+                    );
+            }
+
+            return View(mediaFiles);
         }
 
         [HttpPost]
@@ -36,10 +48,6 @@ namespace Cypisek.Controllers
             if (file != null && file.ContentLength > 0)
                 try
                 {
-                    Directory.CreateDirectory(Server.MapPath(imagesStorageDirLocation)); // only if dirs does not exist
-
-                    // assign MapPath result to variable?
-
                     string path = Path.Combine(Server.MapPath(imagesStorageDirLocation),
                                                Path.GetFileName(file.FileName));
                     file.SaveAs(path);
@@ -53,7 +61,8 @@ namespace Cypisek.Controllers
             {
                 ViewBag.Message = "You have not specified a file.";
             }
-            return View();
+
+            return RedirectToAction("FileManager");
         }
 
         public ActionResult HelloAdmin()
