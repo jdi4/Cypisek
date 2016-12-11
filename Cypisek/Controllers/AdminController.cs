@@ -14,6 +14,8 @@ namespace Cypisek.Controllers
     {
         private const String imagesStorageDirLocation = "~/MediaStorage/Images";
 
+        private IHubContext SignalRHubContext = GlobalHost.ConnectionManager.GetHubContext<HelloTestHub>();
+
         // GET: Admin
         public ActionResult Index()
         {
@@ -97,11 +99,17 @@ namespace Cypisek.Controllers
 
         public ActionResult HelloImage()
         {
-            var context = GlobalHost.ConnectionManager.GetHubContext<HelloTestHub>();
+            //var context = GlobalHost.ConnectionManager.GetHubContext<HelloTestHub>();
 
-            context.Clients.All.addNewMessageToPage("Ktos", "tu jest");
-            context.Clients.All.setImage("Rumcajs", "https://i.ytimg.com/vi/Qkiqqkz22nw/hqdefault.jpg");
+            SignalRHubContext.Clients.All.addNewMessageToPage("Ktos", "tu jest");
+            SignalRHubContext.Clients.All.setImage("Rumcajs", "https://i.ytimg.com/vi/Qkiqqkz22nw/hqdefault.jpg");
             return View("HelloAdmin");
+        }
+
+        public ActionResult ClientManager()
+        {
+            //SignalRHubContext.Clients.
+            return View();
         }
     }
 }
