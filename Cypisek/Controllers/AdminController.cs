@@ -1,4 +1,5 @@
-﻿using Cypisek.ViewModels;
+﻿using Cypisek.Models;
+using Cypisek.ViewModels;
 using Microsoft.AspNet.SignalR;
 using SignalRTest;
 using System;
@@ -108,8 +109,18 @@ namespace Cypisek.Controllers
 
         public ActionResult ClientManager()
         {
-            //SignalRHubContext.Clients.
-            return View();
+            //var clients = SignalRHubContext.Clients.All;
+            List<Client> clientlist = new List<Client>();
+
+            var clients = SignalRHubContext.Clients;
+            //foreach (var litem in clients)
+            //{
+            //    clientlist.Add( new Client(litem.ToString())
+            //        );
+            //}
+            clientlist.Add(new Client(clients.ToString())
+                    );
+            return View(clientlist);
         }
     }
 }

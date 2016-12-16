@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewBag.Title = "ClientManager";
+}
+
+@model IEnumerable<Cypisek.Models.Client>
+
+    <h2>ClientManager</h2>
+
+@foreach(Cypisek.Models.Client cli in Model)
+{
+    <li>
+        @cli.Name
+    </li>
+}
+
