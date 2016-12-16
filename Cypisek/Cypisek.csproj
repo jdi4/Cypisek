@@ -208,6 +208,11 @@
     </Compile>
     <Compile Include="Hubs\HelloTestHub.cs" />
     <Compile Include="App_Start\Startup.cs" />
+    <Compile Include="Models\ClientGroup.cs" />
+    <Compile Include="Models\ClientSchedule.cs" />
+    <Compile Include="Models\ClientScheduleMediaFilesList.cs" />
+    <Compile Include="Models\EndPlayerClient.cs" />
+    <Compile Include="Models\MediaFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -253,7 +258,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
