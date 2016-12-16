@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cypisek", "Cypisek\Cypisek.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cypisek.Data", "Cypisek.Data\Cypisek.Data.csproj", "{FEAA3140-33E8-4D88-BAF5-CFFB695B095C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Cypisek.Services", "Cypisek.Services\Cypisek.Services.csproj", "{D517137D-F55A-4258-95A7-75AE7002A1DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{FEAA3140-33E8-4D88-BAF5-CFFB695B095C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FEAA3140-33E8-4D88-BAF5-CFFB695B095C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FEAA3140-33E8-4D88-BAF5-CFFB695B095C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D517137D-F55A-4258-95A7-75AE7002A1DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D517137D-F55A-4258-95A7-75AE7002A1DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D517137D-F55A-4258-95A7-75AE7002A1DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D517137D-F55A-4258-95A7-75AE7002A1DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
