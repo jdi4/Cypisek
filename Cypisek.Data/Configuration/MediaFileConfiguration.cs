@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Cypisek.Data.Configuration
 {
-    class MediaFileConfiguration : EntityTypeConfiguration<MediaFile>
+    public class MediaFileConfiguration : EntityTypeConfiguration<MediaFile>
     {
         public MediaFileConfiguration()
         {

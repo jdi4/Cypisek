@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Cypisek.Data.Configuration
 {
-    class ClientScheduleConfiguration : EntityTypeConfiguration<ClientSchedule>
+    public class ClientScheduleConfiguration : EntityTypeConfiguration<ClientSchedule>
     {
         public ClientScheduleConfiguration()
         {

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Cypisek.Data.Configuration
 {
-    class ClientGroupConfiguration : EntityTypeConfiguration<ClientGroup>
+    public class ClientGroupConfiguration : EntityTypeConfiguration<ClientGroup>
     {
         public ClientGroupConfiguration()
         {

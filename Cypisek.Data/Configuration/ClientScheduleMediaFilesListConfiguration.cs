@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Cypisek.Data.Configuration
 {
-    class ClientScheduleMediaFilesListConfiguration : EntityTypeConfiguration<ClientScheduleMediaFilesList>
+    public class ClientScheduleMediaFilesListConfiguration : EntityTypeConfiguration<ClientScheduleMediaFilesList>
     {
         public ClientScheduleMediaFilesListConfiguration()
         {

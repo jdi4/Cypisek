@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Cypisek.Data.Configuration
 {
-    class EndPlayerClientConfiguration : EntityTypeConfiguration<EndPlayerClient>
+    public class EndPlayerClientConfiguration : EntityTypeConfiguration<EndPlayerClient>
     {
         public EndPlayerClientConfiguration()
         {
