@@ -75,9 +75,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Cypisek\Cypisek.csproj">
-      <Project>{d36b0ffe-4237-431f-827e-f2a68c3eef62}</Project>
-      <Name>Cypisek</Name>
+    <ProjectReference Include="..\Cypisek.Models\Cypisek.Models.csproj">
+      <Project>{89e2f118-614f-4fb6-83e5-5b62340375be}</Project>
+      <Name>Cypisek.Models</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

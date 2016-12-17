@@ -208,11 +208,6 @@
     </Compile>
     <Compile Include="Hubs\HelloTestHub.cs" />
     <Compile Include="App_Start\Startup.cs" />
-    <Compile Include="Models\ClientGroup.cs" />
-    <Compile Include="Models\ClientSchedule.cs" />
-    <Compile Include="Models\ClientScheduleMediaFilesList.cs" />
-    <Compile Include="Models\EndPlayerClient.cs" />
-    <Compile Include="Models\MediaFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -258,6 +253,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
@@ -266,6 +262,20 @@
     <Content Include="packages.config" />
     <None Include="Project_Readme.html" />
     <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Cypisek.Data\Cypisek.Data.csproj">
+      <Project>{feaa3140-33e8-4d88-baf5-cffb695b095c}</Project>
+      <Name>Cypisek.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Cypisek.Models\Cypisek.Models.csproj">
+      <Project>{89e2f118-614f-4fb6-83e5-5b62340375be}</Project>
+      <Name>Cypisek.Models</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Cypisek.Services\Cypisek.Services.csproj">
+      <Project>{d517137d-f55a-4258-95a7-75ae7002a1dd}</Project>
+      <Name>Cypisek.Services</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

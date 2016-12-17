@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{D517137D-F55A-4258-95A7-75AE7002A1DD}</ProjectGuid>
+    <ProjectGuid>{89E2F118-614F-4FB6-83E5-5B62340375BE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Cypisek.Services</RootNamespace>
-    <AssemblyName>Cypisek.Services</AssemblyName>
+    <RootNamespace>Cypisek.Models</RootNamespace>
+    <AssemblyName>Cypisek.Models</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -40,19 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ClientGroupService.cs" />
-    <Compile Include="EndPlayerClientService.cs" />
+    <Compile Include="ClientGroup.cs" />
+    <Compile Include="ClientSchedule.cs" />
+    <Compile Include="ClientScheduleMediaFilesList.cs" />
+    <Compile Include="EndPlayerClient.cs" />
+    <Compile Include="MediaFile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Cypisek.Data\Cypisek.Data.csproj">
-      <Project>{feaa3140-33e8-4d88-baf5-cffb695b095c}</Project>
-      <Name>Cypisek.Data</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Cypisek.Models\Cypisek.Models.csproj">
-      <Project>{89e2f118-614f-4fb6-83e5-5b62340375be}</Project>
-      <Name>Cypisek.Models</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
