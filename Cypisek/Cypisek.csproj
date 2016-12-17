@@ -230,6 +230,7 @@
     <Compile Include="Controllers\ClientsController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\MediaLibraryController.cs" />
+    <Compile Include="Controllers\SchedulesController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -241,6 +242,7 @@
     <Compile Include="ViewModels\Clients\ClientManagerViewModel.cs" />
     <Compile Include="ViewModels\Clients\EndPlayerClientViewModel.cs" />
     <Compile Include="ViewModels\MediaLibrary\MediaFileViewModel.cs" />
+    <Compile Include="ViewModels\Schedules\ClientScheduleViewModel.cs" />
     <Compile Include="ViewModels\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -290,6 +292,7 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\Schedules\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
