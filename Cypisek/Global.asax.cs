@@ -21,6 +21,9 @@ namespace Cypisek
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
+            // Application["mediaStorageDirLocation"] = Server.MapPath("~/MediaStorage");
+            Bootstrapper.mediaStorageDirLocation = Server.MapPath("~/MediaStorage");
+
             Bootstrapper.Run();
         }
     }
