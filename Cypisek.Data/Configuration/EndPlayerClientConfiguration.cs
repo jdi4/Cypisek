@@ -15,6 +15,8 @@ namespace Cypisek.Data.Configuration
             ToTable("EndPlayerClient");
             Property(g => g.ID).IsRequired();
             Property(g => g.Name).IsRequired();
+            Property(g => g.ClientScheduleID).IsOptional();
+            Property(g => g.ClientGroupID).IsOptional();
         }
     }
 }

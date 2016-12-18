@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Cypisek.ViewModels.Clients.ClientManagerViewModel>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    @Html.ActionLink("Create New", "Create")
+</p>
+
+@foreach (Cypisek.ViewModels.Clients.ClientManagerViewModel group in
+                Model)
+{
+    <h2>
+        @Html.DisplayFor(gitem => group.Name)
+    </h2>
+
+
+    @Html.Partial("EndPlayerClientsTable", group.EndPlayerClientsVM)
+}
+
+@*<h2>
+    Końcówki bez grupy
+</h2>*@
+
+
+
