@@ -41,7 +41,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ClientGroupService.cs" />
+    <Compile Include="MediaFileService.cs" />
     <Compile Include="EndPlayerClientService.cs" />
+    <Compile Include="MediaStorageService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

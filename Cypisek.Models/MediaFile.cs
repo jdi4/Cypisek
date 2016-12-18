@@ -8,8 +8,9 @@ namespace Cypisek.Models
     public class MediaFile
     {
         public int ID { get; set; }
+        public string Name { get; set; }
         public string Path { get; set; }
-        public int Size { get; set; }
+        public long Size { get; set; }
 
         public virtual ICollection<ClientScheduleMediaFilesList> ClientSchedulesList { get; set; }
     }

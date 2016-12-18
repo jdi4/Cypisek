@@ -16,6 +16,8 @@ namespace Cypisek.App_Start
 {
     public static class Bootstrapper
     {
+        public static string mediaStorageDirLocation { get; set; }
+
         public static void Run()
         {
             SetAutofacContainer();
@@ -34,10 +36,20 @@ namespace Cypisek.App_Start
             builder.RegisterAssemblyTypes(typeof(EndPlayerClientRepository).Assembly)
                 .Where(t => t.Name.EndsWith("Repository"))
                 .AsImplementedInterfaces().InstancePerRequest();
+
+            builder.RegisterAssemblyTypes(typeof(MediaFileRepository).Assembly)
+                .Where(t => t.Name.EndsWith("Repository"))
+                .AsImplementedInterfaces().InstancePerRequest();
+
             // Services
             builder.RegisterAssemblyTypes(typeof(EndPlayerClientService).Assembly)
                .Where(t => t.Name.EndsWith("Service"))
                .AsImplementedInterfaces().InstancePerRequest();
+
+            builder.RegisterAssemblyTypes(typeof(MediaStorageService).Assembly)
+               .Where(t => t.Name.EndsWith("Service"))
+               .AsImplementedInterfaces().InstancePerRequest()
+               .WithParameter("storageDirPath", mediaStorageDirLocation);
 
             //signalR - reqs. nuget for integraiton
             builder.RegisterHubs(Assembly.GetExecutingAssembly());
@@ -50,6 +62,7 @@ namespace Cypisek.App_Start
             //builder2.RegisterHubs(Assembly.GetExecutingAssembly());
             //IContainer container2 = builder2.Build();
             GlobalHost.DependencyResolver = new Autofac.Integration.SignalR.AutofacDependencyResolver(container);
+
         }
     }
 }
