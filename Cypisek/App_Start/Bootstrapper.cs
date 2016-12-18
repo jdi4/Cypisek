@@ -66,6 +66,13 @@ namespace Cypisek.App_Start
             //IContainer container2 = builder2.Build();
             GlobalHost.DependencyResolver = new Autofac.Integration.SignalR.AutofacDependencyResolver(container);
 
+            // refresh file db - move to uniform service
+            //using (var scope = container.BeginLifetimeScope())
+            //{
+            //}
+            //var service = scope.Resolve<IMediaStorageService>();
+            var service = DependencyResolver.Current.GetService<IMediaStorageService>();
+            service.RefreshFileDB();
         }
     }
 }
