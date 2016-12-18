@@ -1,4 +1,9 @@
-﻿using System;
+﻿using AutoMapper;
+using Cypisek.Models;
+using Cypisek.Services;
+using Cypisek.ViewModels.MediaLibrary;
+using Cypisek.ViewModels.Schedules;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,10 +13,23 @@ namespace Cypisek.Controllers
 {
     public class SchedulesController : Controller
     {
+        //Cypisek.Services.
+        private readonly IClientScheduleService clientScheduleService;
+        private readonly IMediaFileService mediaFileService;
+
+        public SchedulesController(IClientScheduleService csS, IMediaFileService mfS)
+        {
+            this.clientScheduleService = csS;
+            this.mediaFileService = mfS;
+        }
+
         // GET: Schedules
         public ActionResult Index()
         {
-            return View();
+            var schedules = clientScheduleService.GetClientSchedules();
+            var model = Mapper.Map<IEnumerable<ClientSchedule>, IEnumerable<ClientScheduleViewModel>>(schedules);
+
+            return View(model);
         }
 
         // GET: Schedules/Details/5
@@ -23,7 +41,14 @@ namespace Cypisek.Controllers
         // GET: Schedules/Create
         public ActionResult Create()
         {
-            return View();
+            var files = mediaFileService.GetMediaFiles();
+
+            var model = new ClientScheduleCreateViewModel();
+
+            model.MediaFileList = (ICollection< MediaFileViewModel>) Mapper.Map<IEnumerable<MediaFile>, 
+                IEnumerable<MediaFileViewModel>>(files);
+
+            return View(model);
         }
 
         // POST: Schedules/Create
@@ -32,6 +57,7 @@ namespace Cypisek.Controllers
         {
             try
             {
+                
                 // TODO: Add insert logic here
 
                 return RedirectToAction("Index");

@@ -242,6 +242,8 @@
     <Compile Include="ViewModels\Clients\ClientManagerViewModel.cs" />
     <Compile Include="ViewModels\Clients\EndPlayerClientViewModel.cs" />
     <Compile Include="ViewModels\MediaLibrary\MediaFileViewModel.cs" />
+    <Compile Include="ViewModels\Schedules\ClientScheduleCreateViewModel.cs" />
+    <Compile Include="ViewModels\Schedules\ClientScheduleFormViewModel.cs" />
     <Compile Include="ViewModels\Schedules\ClientScheduleViewModel.cs" />
     <Compile Include="ViewModels\Utilities.cs" />
   </ItemGroup>
@@ -288,11 +290,12 @@
     <Content Include="Views\MediaLibrary\FileBrowser.cshtml" />
     <Content Include="Views\Clients\Index.cshtml" />
     <Content Include="Views\Clients\EndPlayerClientsTable.cshtml" />
+    <Content Include="Views\Schedules\Index.cshtml" />
+    <Content Include="Views\Schedules\Create.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Schedules\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
