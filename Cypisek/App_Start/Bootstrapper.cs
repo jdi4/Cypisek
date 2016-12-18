@@ -3,6 +3,7 @@ using Autofac.Integration.Mvc;
 using Autofac.Integration.SignalR;
 using Cypisek.Data.Infrastructure;
 using Cypisek.Data.Repositories;
+using Cypisek.Mappings;
 using Cypisek.Services;
 using Microsoft.AspNet.SignalR;
 using System;
@@ -22,13 +23,15 @@ namespace Cypisek.App_Start
         {
             SetAutofacContainer();
             //Configure AutoMapper
-            //AutoMapperConfiguration.Configure();
+            AutoMapperConfiguration.Configure();
         }
 
         private static void SetAutofacContainer()
         {
             var builder = new ContainerBuilder();
+
             builder.RegisterControllers(Assembly.GetExecutingAssembly());
+
             builder.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerRequest();
             builder.RegisterType<DbFactory>().As<IDbFactory>().InstancePerRequest();
 
