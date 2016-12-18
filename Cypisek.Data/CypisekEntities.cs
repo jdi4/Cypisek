@@ -32,5 +32,6 @@ namespace Cypisek.Data
             modelBuilder.Configurations.Add(new EndPlayerClientConfiguration());
             modelBuilder.Configurations.Add(new MediaFileConfiguration());
         }
+
     }
 }

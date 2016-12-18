@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cypisek.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -7,15 +8,58 @@ using System.Threading.Tasks;
 
 namespace Cypisek.Data
 {
-    public class CypisekSeedData : DropCreateDatabaseIfModelChanges<CypisekEntities>
+    public class CypisekSeedData : DropCreateDatabaseAlways<CypisekEntities>
     {
         protected override void Seed(CypisekEntities context)
         {
             //seed if needed
-            //GetCategories().ForEach(c => context.Categories.Add(c));
-            //GetGadgets().ForEach(g => context.Gadgets.Add(g));
+            PopulateClientGroups().ForEach(cg => context.ClientGroups.Add(cg));
+            PopulateEndPlayerClients().ForEach(c => context.EndPlayerClients.Add(c));
 
-            //context.Commit();
+            context.Commit();
+        }
+
+        private static List<ClientGroup> PopulateClientGroups()
+        {
+            return new List<ClientGroup>()
+            {
+                new ClientGroup()
+                {
+                    Name = "Grupa A",
+                },
+                new ClientGroup()
+                {
+                    Name = "Grupa B"
+                }
+            };
+        }
+
+        private static List<EndPlayerClient> PopulateEndPlayerClients()
+        {
+            return new List<EndPlayerClient>()
+            {
+                new EndPlayerClient()
+                {
+                    Name = "Końcówka 1",
+                    ClientGroupID = 2,
+                    LastConnectionDate = DateTime.Now,
+                    IsSynchronized = false
+                },
+                new EndPlayerClient()
+                {
+                    Name = "Końcówka 2",
+                    ClientGroupID = 1,
+                    LastConnectionDate = DateTime.Now,
+                    IsSynchronized = true
+                },
+                                new EndPlayerClient()
+                {
+                    Name = "Końcówka 3",
+                    ClientGroupID = 2,
+                    LastConnectionDate = DateTime.Now,
+                    IsSynchronized = false
+                }
+            };
         }
     }
 }

@@ -15,6 +15,8 @@ namespace Cypisek.Services
         EndPlayerClient GetEndPlayerClient(int id);
         void CreateEndPlayerClient(EndPlayerClient EndPlayerClient);
         void SaveEndPlayerClient();
+
+        IEnumerable<EndPlayerClient> GetEndPlayerClientsWithoutGroup();
     }
 
     public class EndPlayerClientService : IEndPlayerClientService
@@ -40,7 +42,14 @@ namespace Cypisek.Services
 
         public IEnumerable<EndPlayerClient> GetEndPlayerClients()
         {
-            throw new NotImplementedException();
+            var clients = EndPlayerClientsRepository.GetAll();
+            return clients;
+        }
+
+        public IEnumerable<EndPlayerClient> GetEndPlayerClientsWithoutGroup()
+        {
+            var noGroupClients = EndPlayerClientsRepository.GetMany(c => c.ClientGroupID == null);
+            return noGroupClients;
         }
 
         public void SaveEndPlayerClient()
