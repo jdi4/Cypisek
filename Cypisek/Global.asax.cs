@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Cypisek.App_Start;
+using Cypisek.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -12,10 +14,14 @@ namespace Cypisek
     {
         protected void Application_Start()
         {
+            System.Data.Entity.Database.SetInitializer(new CypisekSeedData());
+
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+            Bootstrapper.Run();
         }
     }
 }
