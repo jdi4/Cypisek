@@ -1,4 +1,4 @@
-﻿@model Cypisek.ViewModels.Schedules.ClientScheduleCreateViewModel
+﻿@model Cypisek.ViewModels.Schedules.ClientScheduleFormViewModel
 
 @{
     ViewBag.Title = "Dodaj harmonogram";
@@ -51,17 +51,20 @@
                     @Html.DisplayNameFor(model => model.MediaFileList.First().FileSize)
                 </th>
             </tr>
-            @foreach (var item in Model.MediaFileList)
+            @for (int i = 0 ; i < Model.MediaFileList.Count; i++)
             {
                 <tr>
                     <td>
-                        <input type="checkbox" name="selectedFiles" value="@item.ID" />
+                        @Html.CheckBoxFor(x => x.MediaFileList[i].IsSelected)
+                        @Html.HiddenFor(x => x.MediaFileList[i].ID)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.FileName)
+                        @Html.DisplayFor(x => x.MediaFileList[i].FileName)
+                        @Html.HiddenFor(x => x.MediaFileList[i].FileName)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.FileSize)
+                        @Html.DisplayFor(x => x.MediaFileList[i].FileSize)
+                        @Html.HiddenFor(x => x.MediaFileList[i].FileSize)
                     </td>
                 </tr>
             }

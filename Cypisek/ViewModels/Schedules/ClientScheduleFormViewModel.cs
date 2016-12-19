@@ -12,7 +12,6 @@ namespace Cypisek.ViewModels.Schedules
         public DateTime StartDate { get; set; }
         public DateTime ExpirationDate { get; set; }
 
-        public virtual ICollection<ClientScheduleMediaFilesList> MediaPlaylist { get; set; }
-        public virtual ICollection<EndPlayerClient> EndPlayerClients { get; set; }
+        public List<MediaFileSelectViewModel> MediaFileList { get; set; }
     }
 }

@@ -245,6 +245,7 @@
     <Compile Include="ViewModels\Schedules\ClientScheduleCreateViewModel.cs" />
     <Compile Include="ViewModels\Schedules\ClientScheduleFormViewModel.cs" />
     <Compile Include="ViewModels\Schedules\ClientScheduleViewModel.cs" />
+    <Compile Include="ViewModels\Schedules\MediaFileSelectViewModel.cs" />
     <Compile Include="ViewModels\Utilities.cs" />
   </ItemGroup>
   <ItemGroup>

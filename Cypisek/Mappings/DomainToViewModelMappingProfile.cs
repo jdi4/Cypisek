@@ -23,6 +23,11 @@ namespace Cypisek.Mappings
             CreateMap<MediaFile, MediaFileViewModel>()
                 .ForMember(vm => vm.FileName, map => map.MapFrom(m => m.Name))
                 .ForMember(vm => vm.Bytes, map => map.MapFrom(m => m.Size));
+
+            CreateMap<MediaFile, MediaFileSelectViewModel>()
+                .ForMember(vm => vm.FileName, map => map.MapFrom(m => m.Name))
+                .ForMember(vm => vm.Bytes, map => map.MapFrom(m => m.Size))
+                .ForMember(vm => vm.IsSelected, map => map.UseValue<bool>(false));
         }
 
         public override string ProfileName

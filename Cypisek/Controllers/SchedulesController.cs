@@ -43,21 +43,32 @@ namespace Cypisek.Controllers
         {
             var files = mediaFileService.GetMediaFiles();
 
-            var model = new ClientScheduleCreateViewModel();
+            var model = new ClientScheduleFormViewModel();
 
-            model.MediaFileList = (ICollection< MediaFileViewModel>) Mapper.Map<IEnumerable<MediaFile>, 
-                IEnumerable<MediaFileViewModel>>(files);
+            //model.MediaFileList = (ICollection< MediaFileViewModel>) Mapper.Map<IEnumerable<MediaFile>, 
+            //    IEnumerable<MediaFileViewModel>>(files);
+
+            model.MediaFileList = (List<MediaFileSelectViewModel>) 
+                Mapper.Map<IEnumerable<MediaFile>, IEnumerable<MediaFileSelectViewModel>>(files);
 
             return View(model);
         }
 
         // POST: Schedules/Create
+        // t public ActionResult Create(FormCollection collection)
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult Create(ClientScheduleFormViewModel newSchedule)
         {
             try
             {
-                
+                if (ModelState.IsValid)
+                {
+
+                }
+                else
+                {
+                    return View(newSchedule);
+                }
                 // TODO: Add insert logic here
 
                 return RedirectToAction("Index");
