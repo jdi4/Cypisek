@@ -11,7 +11,7 @@ namespace Cypisek.Data
 {
     public class CypisekEntities : DbContext
     {
-        public CypisekEntities() : base("CypisekEntities") { }
+        public CypisekEntities() : base(Environment.GetEnvironmentVariable("cypisekDB_CS")) { }
 
         public DbSet<ClientGroup> ClientGroups { get; set; }
         public DbSet<ClientSchedule> ClientSchedule { get; set; }
