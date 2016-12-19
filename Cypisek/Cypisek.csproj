@@ -234,6 +234,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Hubs\ContentHub.cs" />
     <Compile Include="Hubs\HelloTestHub.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Mappings\AutoMapperConfiguration.cs" />
