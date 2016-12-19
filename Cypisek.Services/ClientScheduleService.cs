@@ -14,17 +14,20 @@ namespace Cypisek.Services
         IEnumerable<ClientSchedule> GetClientSchedules();
         ClientSchedule GetClientSchedule(int id);
         void CreateClientSchedule(ClientSchedule ClientSchedule);
+        void CreateClientSchedule(ClientSchedule ClientSchedule, IEnumerable<int> filesIDs);
         void SaveClientSchedule();
     }
 
     public class ClientScheduleService : IClientScheduleService
     {
-        private readonly IClientScheduleRepository ClientSchedulesRepository;
+        private readonly IClientScheduleRepository clientSchedulesRepository;
+        private readonly IClientScheduleMediaFilesListRepository clientScheduleMediaFilesListRepository;
         private readonly IUnitOfWork unitOfWork;
 
-        public ClientScheduleService(IClientScheduleRepository ClientSchedulesRepository, IUnitOfWork unitOfWork)
+        public ClientScheduleService(IClientScheduleRepository csR, IClientScheduleMediaFilesListRepository csmfR, IUnitOfWork unitOfWork)
         {
-            this.ClientSchedulesRepository = ClientSchedulesRepository;
+            this.clientSchedulesRepository = csR;
+            this.clientScheduleMediaFilesListRepository = csmfR;
             this.unitOfWork = unitOfWork;
         }
 
@@ -32,24 +35,39 @@ namespace Cypisek.Services
 
         public IEnumerable<ClientSchedule> GetClientSchedules()
         {
-            var ClientSchedules = ClientSchedulesRepository.GetAll();
+            var ClientSchedules = clientSchedulesRepository.GetAll();
             return ClientSchedules;
         }
 
         public ClientSchedule GetClientSchedule(int id)
         {
-            var ClientSchedule = ClientSchedulesRepository.GetById(id);
+            var ClientSchedule = clientSchedulesRepository.GetById(id);
             return ClientSchedule;
         }
 
         public void CreateClientSchedule(ClientSchedule ClientSchedule)
         {
-            ClientSchedulesRepository.Add(ClientSchedule);
+            //ClientSchedulesRepository.Add(ClientSchedule);
         }
 
         public void SaveClientSchedule()
         {
             unitOfWork.Commit();
+        }
+
+        public void CreateClientSchedule(ClientSchedule ClientSchedule, IEnumerable<int> filesIDs)
+        {
+            clientSchedulesRepository.Add(ClientSchedule);
+
+            foreach (int i in filesIDs)
+            {
+                clientScheduleMediaFilesListRepository.Add( new ClientScheduleMediaFilesList()
+                {
+                    ClientScheduleID = ClientSchedule.ID,
+                    MediaFileID = i,
+                    PlayTime = 10
+                });
+            }
         }
 
         #endregion

@@ -57,25 +57,41 @@ namespace Cypisek.Controllers
         // POST: Schedules/Create
         // t public ActionResult Create(FormCollection collection)
         [HttpPost]
-        public ActionResult Create(ClientScheduleFormViewModel newSchedule)
+        public ActionResult Create(ClientScheduleFormViewModel formSchedule)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
+                    ClientSchedule newSchedule = 
+                        Mapper.Map<ClientScheduleFormViewModel, ClientSchedule>(formSchedule);
+
+                    List<int> filesIdsList = new List<int>();
+
+                    foreach (MediaFileSelectViewModel mfsvm in formSchedule.MediaFileList)
+                    {
+                        if (mfsvm.IsSelected)
+                        {
+                            filesIdsList.Add(mfsvm.ID);
+                        }
+                    }
+
+                    clientScheduleService.CreateClientSchedule(newSchedule, filesIdsList);
+                    clientScheduleService.SaveClientSchedule();
 
                 }
                 else
                 {
-                    return View(newSchedule);
+                    return View(formSchedule);
                 }
                 // TODO: Add insert logic here
 
                 return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                ViewBag["error"] = ex.Message;
+                return View(formSchedule);
             }
         }
 

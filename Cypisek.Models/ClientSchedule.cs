@@ -13,7 +13,7 @@ namespace Cypisek.Models
         public DateTime ExpirationDate { get; set; }
 
         // Nav. properties
-        public virtual ICollection<ClientScheduleMediaFilesList> MediaFilessList { get; set; }
+        public virtual ICollection<ClientScheduleMediaFilesList> MediaPlaylist { get; set; }
 
         public virtual ICollection<EndPlayerClient> EndPlayerClients { get; set; }
 
