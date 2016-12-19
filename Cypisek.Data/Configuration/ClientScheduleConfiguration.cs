@@ -13,10 +13,10 @@ namespace Cypisek.Data.Configuration
         public ClientScheduleConfiguration()
         {
             ToTable("ClientSchedule");
-            Property(g => g.ID).IsRequired();
             Property(g => g.Name).IsRequired();
             Property(g => g.StartDate).IsRequired();
             Property(g => g.ExpirationDate).IsRequired();
+
         }
     }
 }

@@ -14,6 +14,7 @@ namespace Cypisek.Services
     {
         IEnumerable<MediaFile> GetFiles();
         void AddFile(Stream s, string fileName);
+        void RefreshFileDB();
     }
 
     public class MediaStorageService : IMediaStorageService
@@ -27,6 +28,18 @@ namespace Cypisek.Services
             this.StorageDirPath = storageDirPath;
             this.mediaFileRepository = mediaFileRepository;
             this.unitOfWork = uow;
+        }
+
+        public void RefreshFileDB()
+        {
+            var files = GetFiles();
+            
+            foreach (MediaFile f in files)
+            {
+                mediaFileRepository.Add(f);
+            }
+
+            unitOfWork.Commit();
         }
 
         public void AddFile(Stream s, string fileName)

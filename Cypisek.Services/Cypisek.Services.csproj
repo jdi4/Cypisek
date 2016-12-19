@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ClientScheduleService.cs" />
     <Compile Include="ClientGroupService.cs" />
     <Compile Include="MediaFileService.cs" />
     <Compile Include="EndPlayerClientService.cs" />
