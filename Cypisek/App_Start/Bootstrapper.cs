@@ -55,7 +55,8 @@ namespace Cypisek.App_Start
                .WithParameter("storageDirPath", mediaStorageDirLocation);
 
             //signalR - reqs. nuget for integraiton
-            builder.RegisterHubs(Assembly.GetExecutingAssembly());
+            //builder.RegisterHubs(Assembly.GetExecutingAssembly());
+            builder.RegisterType<Hubs.ContentHub>().ExternallyOwned();
             //container = builder.Build();
 
             IContainer container = builder.Build();

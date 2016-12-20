@@ -14,6 +14,7 @@ namespace Cypisek.Services
         IEnumerable<EndPlayerClient> GetEndPlayerClients();
         EndPlayerClient GetEndPlayerClient(int id);
         void CreateEndPlayerClient(EndPlayerClient EndPlayerClient);
+        void EditEndPlayerClient(EndPlayerClient endPlayerClient);
         void SaveEndPlayerClient();
 
         IEnumerable<EndPlayerClient> GetEndPlayerClientsWithoutGroup();
@@ -33,6 +34,11 @@ namespace Cypisek.Services
         public void CreateEndPlayerClient(EndPlayerClient EndPlayerClient)
         {
             EndPlayerClientsRepository.Add(EndPlayerClient);
+        }
+
+        public void EditEndPlayerClient(EndPlayerClient endPlayerClient)
+        {
+            EndPlayerClientsRepository.Edit(endPlayerClient);
         }
 
         public EndPlayerClient GetEndPlayerClient(int id)

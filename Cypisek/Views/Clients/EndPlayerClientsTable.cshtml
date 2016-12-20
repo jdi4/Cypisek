@@ -7,6 +7,9 @@
             @Html.DisplayNameFor(model => model.Name)
         </th>
         <th>
+            @Html.DisplayNameFor(model => model.IsConnected)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.LastConnectionDate)
         </th>
         <th>
@@ -21,6 +24,9 @@
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsConnected)
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.LastConnectionDate)
