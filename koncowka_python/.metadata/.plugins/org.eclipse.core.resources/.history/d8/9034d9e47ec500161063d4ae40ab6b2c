@@ -1,34 +1,27 @@
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from signalr import Connection
-from xml.dom.minidom import *
+import xml.etree.cElementTree as ET
 
 import sys
 import urllib2
 import wx
 from pydoc import doc
 
-def write_to_file(doc, name="config.xml"):
-    file_object = open(name, "w")
-    xml.dom.ext.PrettyPrint(doc, file_object)
-    file_object.close()
+
 
 def make_xml():
-    doc= Document()
-    node=doc.createElement("foo")
-    node.appendChild(doc.createTextNode("test"))
-    doc.appendChild(node)
-    
-    return doc
-make_xml().writexml(sys.stdout)
-write_to_file(doc)
+    config = ET.Element("config")
+    ET.SubElement(config,"address").text="http://cypisek.azurewebsites.net"
+    ET.SubElement(config,"ID").text="123456"
+    tree=ET.ElementTree(config)
+    tree.write("config.xml")
 
 class Panel1(wx.Panel):
    
     def __init__(self, parent, id):
         # create the panel
         wx.Panel.__init__(self, parent, id)
-        
 
     def Load(self,image_file,image_name):
         try:
@@ -66,16 +59,25 @@ def internetCheck():
         print "Not connect"
         return 0
     
- 
+def getSchedule():
+    pliki = ['aaa.jpg','bbb.jpg','ccc.jpg']
+    czas_pliki=[10,10,20]
+    config = ET.Element("config")
+    ET.SubElement(config,"address").text="http://cypisek.azurewebsites.net"
+    ET.SubElement(config,"ID").text="123456"
+    ET.SubElement(config,"schedule").text="testowy harmonogram"
+    ET.SubElement(ET.Element("schedule"),"image").text=pliki[0];
+    ET.SubElement(ET.Element("schedule"),"image").text=pliki[1];
+    ET.SubElement(ET.Element("schedule"),"image").text=pliki[2];
+    tree=ET.ElementTree(config)
+    tree.write("config.xml")
+    
 def main():
+    
     if (internetCheck()): 
+        
         with Session() as session:
-            
-            try:
-                connection = Connection("http://cypisek.azurewebsites.net/signalr", session)
-               
-            except IOError:
-                print "Working without Internet Connection"
+            connection = Connection("http://cypisek.azurewebsites.net/signalr", session)
             chat = connection.register_hub('helloTestHub')
             file_name=''
             def setImage(file_name, url):
@@ -83,6 +85,7 @@ def main():
                 print( 'ustawiono zdjecie:', file_name, url)
                 
                 file_name+='.jpg'
+                
                 with open(file_name,'wb') as f:
                     f.write(urllib2.urlopen(url).read())
                     f.close()
@@ -90,15 +93,20 @@ def main():
                 # create a window/frame, no parent, -1 is default ID
                 # change the size of the frame to fit the backgound images
     
-                
+               
+               
                 app.MainLoop()
-    
+
+          # print test;
             chat.client.on('setImage', setImage)  
-            chat.client.on('setImage', setImage)  
+            
+            #chat.server.invoke('TestReturnString','tets')
             with connection:
               connection.wait(10)  
-    
-
+    else:
+        getSchedule()
+        #wczytanie pliku xml
+                 
 if __name__ == "__main__":
     main()
     

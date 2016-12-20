@@ -1,16 +1,23 @@
 from requests import Session
 from requests.auth import HTTPBasicAuth
 from signalr import Connection
-from xml.dom.minidom import *
+import xml.etree.cElementTree as ET
 
 import sys
 import urllib2
 import wx
 from pydoc import doc
 
+
+config = ET.Element("config")
+ET.SubElement(config,"address").text="http://cypisek.azurewebsites.net"
+ET.SubElement(config,"ID").text="123456")
+tree=ET.ElementTree(config)
+tree.write("config.xml")
 def write_to_file(doc, name="config.xml"):
     file_object = open(name, "w")
-    xml.dom.ext.PrettyPrint(doc, file_object)
+  #  xml.dom.ext.PrettyXml()
+   # xml.dom.ext.PrettyPrint(doc, file_object)
     file_object.close()
 
 def make_xml():
@@ -18,7 +25,6 @@ def make_xml():
     node=doc.createElement("foo")
     node.appendChild(doc.createTextNode("test"))
     doc.appendChild(node)
-    
     return doc
 make_xml().writexml(sys.stdout)
 write_to_file(doc)

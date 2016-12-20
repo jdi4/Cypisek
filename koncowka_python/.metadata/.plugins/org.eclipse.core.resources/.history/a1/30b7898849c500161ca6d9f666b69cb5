@@ -10,7 +10,8 @@ from pydoc import doc
 
 def write_to_file(doc, name="config.xml"):
     file_object = open(name, "w")
-    xml.dom.ext.PrettyPrint(doc, file_object)
+  #  xml.dom.ext.PrettyXml()
+   # xml.dom.ext.PrettyPrint(doc, file_object)
     file_object.close()
 
 def make_xml():

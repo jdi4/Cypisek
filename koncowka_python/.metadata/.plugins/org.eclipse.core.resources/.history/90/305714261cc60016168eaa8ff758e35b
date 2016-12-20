@@ -1,0 +1,125 @@
+from requests import Session
+from requests.auth import HTTPBasicAuth
+from signalr import Connection
+import xml.etree.cElementTree as ET
+import random
+import sys
+import urllib2
+import wx
+from pydoc import doc
+from _elementtree import tostring
+
+
+class Bunch:
+    def __init__(self,**kwds):
+        self.__dict__.update(kwds)
+        
+
+def setID():
+    ID='ID'
+    for x in range (0,16):
+        ID = ID+str(random.randrange(0, 9))
+    return ID
+     
+class Panel1(wx.Panel):
+   
+    def __init__(self, parent, id):
+        # create the panel
+        wx.Panel.__init__(self, parent, id)
+
+    def Load(self,image_file,image_name):
+        try:
+            # pick an image file you have in the working 
+            # folder you can load .jpg  .png  .bmp  or 
+            # .gif files
+           
+            bmp1 = wx.Image(image_file,wx.BITMAP_TYPE_ANY).ConvertToBitmap()
+            # image's upper left corner anchors at panel 
+            # coordinates (0, 0)
+            self.bitmap1 = wx.StaticBitmap(self, -1, bmp1, (0, 0))
+            # show some image details
+            str1 = "%s  %dx%d" % (image_file, bmp1.GetWidth(),bmp1.GetHeight()) 
+            '''parent.SetTitle(str1)'''
+        except IOError:
+            print "Image file %s not found" % imageFile
+            raise SystemExit
+ 
+       
+config=Bunch(ID=setID(),schedule_name="Testowy")
+lista1=[]
+lista1.append({"name":"testname.jpg","time":10})
+lista1.append({"name1":"testname1.jpg","time":10})
+lista1.append({"name2":"testname2.jpg","time":10})
+harmonogram1=Bunch(schedule_name="Testowy",playlist=lista1)
+app = wx.App(False)
+frame1 = wx.Frame(None, -1, "An image on a panel", 
+size=(400, 400))
+frame1.Show(True)             
+# create the class instance
+panel1 = Panel1(frame1, -1)
+ 
+def internetCheck():
+    try :
+        url = "http://cypisek.azurewebsites.net"
+        urllib2.urlopen(url);
+        print"Connected"
+        return 1
+    except :
+        print "Not connect"
+        return 0
+    
+def setSchedule():
+    pliki = ['aaa.jpg','bbb.jpg','ccc.jpg']
+    czas_pliki=[10,10,20]
+    config = ET.Element("config")
+    schedule = ET.Element("schedule")
+    ET.SubElement(config,"address").text="http://cypisek.azurewebsites.net"
+    ET.SubElement(config,"ID").text="123456"
+    ET.SubElement(config,"schedule").text="testowy harmonogram"
+    ET.SubElement(config,"image").text="pliki[0]";
+    ET.SubElement(config,"image").text=pliki[1];
+    ET.SubElement(config,"image").text=pliki[2];
+    tree=ET.ElementTree(config)
+    tree.write("config.xml")
+def getSchedule():
+    print "get"
+def getImage(img_name):
+    url="http://cypisek.azurewebsites.net/storage/images/"+str(img_name)
+    print( 'Poprano zdjecie:', url)
+    with open(file_name,'wb') as f:
+        f.write(urllib2.urlopen(url).read())
+        f.close()
+        
+def setImage(file_name):
+    print( 'ustawiono zdjecie:', file_name)
+    
+        
+    # create a window/frame, no parent, -1 is default ID
+    # change the size of the frame to fit the backgound images
+
+               
+               
+def main():
+    if (internetCheck()): 
+        
+        with Session() as session:
+            connection = Connection("http://cypisek.azurewebsites.net/signalr", session)
+            chat = connection.register_hub('helloTestHub')
+            file_name=''
+            app.MainLoop() 
+          # print test;
+            chat.client.on('setImage', setImage)  
+            #wysylanie ID koncowki
+            chat.server.invoke('SendID',config.ID)
+            
+            with connection:
+              connection.wait(10)  
+    else:
+        getSchedule()
+        #wczytanie pliku xml
+                
+if __name__ == "__main__":
+    main()
+    
+    
+    
