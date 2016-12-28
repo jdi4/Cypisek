@@ -51,6 +51,17 @@ namespace Cypisek.Hubs
             }
         }
 
+        public void InvokeSending()
+        {
+            string conid = Context.ConnectionId;
+            int clientid = _connections.GetUser(conid);
+
+            string data = "Dane dla klienta: [data, " + DateTime.Now + "];[ID w pamieci serwera, "
+                + clientid + "]";
+
+            Clients.Caller.receiveData(data);
+        }
+
         public override Task OnDisconnected(bool stopCalled)
         {
             string conid = Context.ConnectionId;
