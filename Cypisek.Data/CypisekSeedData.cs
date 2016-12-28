@@ -40,7 +40,6 @@ namespace Cypisek.Data
             {
                 new EndPlayerClient()
                 {
-                    ID = 1,
                     Name = "Końcówka 1",
                     ClientGroupID = 2,
                     LastConnectionDate = DateTime.Now,
