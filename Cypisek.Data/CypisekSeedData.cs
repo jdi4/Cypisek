@@ -61,6 +61,20 @@ namespace Cypisek.Data
                     LastConnectionDate = DateTime.Now,
                     IsSynchronized = false,
                     IsConnected = false
+                },
+                new EndPlayerClient()
+                {
+                    Name = "Końcówka 4",
+                    LastConnectionDate = DateTime.Now,
+                    IsSynchronized = false,
+                    IsConnected = false
+                },
+                new EndPlayerClient()
+                {
+                    Name = "Końcówka 5",
+                    LastConnectionDate = DateTime.Now,
+                    IsSynchronized = false,
+                    IsConnected = false
                 }
             };
         }

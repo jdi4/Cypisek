@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Cypisek.Models;
 using Cypisek.Services;
+using Cypisek.ViewModels;
 using Cypisek.ViewModels.Clients;
 using System;
 using System.Collections.Generic;
@@ -24,14 +25,41 @@ namespace Cypisek.Controllers
         // GET: Clients
         public ActionResult Index()
         {
-            var groups = clientGroupService.GetClientGroups();
+            var model = new ClientManagerViewModel();
 
-            IEnumerable<ClientManagerViewModel> model =
-                Mapper.Map<IEnumerable<ClientGroup>, IEnumerable<ClientManagerViewModel>>(groups);
+            var groups = clientGroupService.GetClientGroupsIncludeClients();
+            model.ClientsGroups =
+                Mapper.Map<IEnumerable<ClientGroup>, ICollection<ClientGroupViewModel>>(groups);
 
-            //var clientsWithoutGroup = endPlayerClientService.GetEndPlayerClientsWithoutGroup();
-            //model. Mapper.Map<IEnumerable<EndPlayerClient>, IEnumerable<EndPlayerClientViewModel>>(clientsWithoutGroup);
+            var clientsWithoutGroup = endPlayerClientService.GetEndPlayerClientsWithoutGroup();
+            model.ClientsWithoutGroup = Mapper
+                .Map<IEnumerable<EndPlayerClient>, ICollection<EndPlayerClientViewModel>>(clientsWithoutGroup);
 
+
+            //var epClients = endPlayerClientService.GetEndPlayerClients()
+            //    .GroupBy(c => c.ClientGroupID);
+            //.GroupBy(c => c.ClientGroupID == null ? -1 : c.ClientGroupID);
+
+            //ClientManagerViewModel model2 = new ClientManagerViewModel();
+            //foreach (var epClientGorup in epClients)
+            //{
+            //    if (epClientGorup.Key == null)
+            //    {
+            //        model2.ClientsWithoutGroup =
+            //             Mapper.Map<IEnumerable<EndPlayerClient>, ICollection<EndPlayerClientViewModel>>(epClientGorup.ToList());
+            //    }
+            //    else
+            //    {
+            //        model2.ClientsGroups.Add(new ClientGroupViewModel()
+            //        {
+            //            ID = epClientGorup.First().ClientGroup.ID,
+            //            Name = epClientGorup.First().ClientGroup.Name,
+            //            EndPlayerClients = Mapper
+            //            .Map<IEnumerable<EndPlayerClient>, ICollection<EndPlayerClientViewModel>>
+            //            (epClientGorup.ToList())
+            //    });
+            //    }
+            //}
             return View(model);
         }
 
