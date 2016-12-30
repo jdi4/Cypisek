@@ -12,6 +12,7 @@ namespace Cypisek.Services
     public interface IClientGroupService
     {
         IEnumerable<ClientGroup> GetClientGroups();
+        IEnumerable<ClientGroup> GetClientGroupsIncludeClients();
         ClientGroup GetClientGroup(int id);
         void CreateClientGroup(ClientGroup ClientGroup);
         void SaveClientGroup();
@@ -50,6 +51,11 @@ namespace Cypisek.Services
         public void SaveClientGroup()
         {
             unitOfWork.Commit();
+        }
+
+        public IEnumerable<ClientGroup> GetClientGroupsIncludeClients()
+        {
+            return ClientGroupsRepository.GetAllIncludeClients();
         }
 
         #endregion

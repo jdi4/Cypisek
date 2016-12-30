@@ -12,7 +12,7 @@ namespace Cypisek.Data.Infrastructure
     {
         #region Properties
         private CypisekEntities dataContext;
-        private readonly IDbSet<T> dbSet;
+        protected readonly IDbSet<T> dbSet;
 
         protected IDbFactory DbFactory
         {
