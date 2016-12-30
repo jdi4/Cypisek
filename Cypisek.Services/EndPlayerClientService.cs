@@ -18,43 +18,50 @@ namespace Cypisek.Services
         void SaveEndPlayerClient();
 
         IEnumerable<EndPlayerClient> GetEndPlayerClientsWithoutGroup();
+        IEnumerable<EndPlayerClient> GetEndPlayerClientsIncludeGroups();
     }
 
     public class EndPlayerClientService : IEndPlayerClientService
     {
-        private readonly IEndPlayerClientRepository EndPlayerClientsRepository;
+        private readonly IEndPlayerClientRepository endPlayerClientRepository;
         private readonly IUnitOfWork unitOfWork;
 
         public EndPlayerClientService(IEndPlayerClientRepository endPlayerClientsRepository, IUnitOfWork unitOfWork)
         {
-            this.EndPlayerClientsRepository = endPlayerClientsRepository;
+            this.endPlayerClientRepository = endPlayerClientsRepository;
             this.unitOfWork = unitOfWork;
         }
 
         public void CreateEndPlayerClient(EndPlayerClient EndPlayerClient)
         {
-            EndPlayerClientsRepository.Add(EndPlayerClient);
+            endPlayerClientRepository.Add(EndPlayerClient);
         }
 
         public void EditEndPlayerClient(EndPlayerClient endPlayerClient)
         {
-            EndPlayerClientsRepository.Edit(endPlayerClient);
+            endPlayerClientRepository.Edit(endPlayerClient);
         }
 
         public EndPlayerClient GetEndPlayerClient(int id)
         {
-            return EndPlayerClientsRepository.GetById(id);
+            return endPlayerClientRepository.GetById(id);
         }
 
         public IEnumerable<EndPlayerClient> GetEndPlayerClients()
         {
-            var clients = EndPlayerClientsRepository.GetAll();
+            var clients = endPlayerClientRepository.GetAll();
             return clients;
+        }
+
+        public IEnumerable<EndPlayerClient> GetEndPlayerClientsIncludeGroups()
+        {
+            //endPlayerClientRepository.GetAll()
+            throw new NotImplementedException();
         }
 
         public IEnumerable<EndPlayerClient> GetEndPlayerClientsWithoutGroup()
         {
-            var noGroupClients = EndPlayerClientsRepository.GetMany(c => c.ClientGroupID == null);
+            var noGroupClients = endPlayerClientRepository.GetMany(c => c.ClientGroupID == null);
             return noGroupClients;
         }
 

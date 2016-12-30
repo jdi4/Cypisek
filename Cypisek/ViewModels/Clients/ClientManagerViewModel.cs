@@ -8,9 +8,7 @@ namespace Cypisek.ViewModels.Clients
 {
     public class ClientManagerViewModel
     {
-        public int ID { get; set; }
-        public string Name { get; set; }
-
-        public ICollection<EndPlayerClientViewModel> EndPlayerClientsVM { get; set; }
+        public ICollection<ClientGroupViewModel> ClientsGroups { get; set; }
+        public ICollection<EndPlayerClientViewModel> ClientsWithoutGroup { get; set; }
     }
 }

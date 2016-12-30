@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Cypisek.ViewModels.Clients.ClientManagerViewModel>
+﻿@model Cypisek.ViewModels.Clients.ClientManagerViewModel
 
 @{
     ViewBag.Title = "Index";
@@ -7,23 +7,40 @@
 <h2>Index</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Utwórz grupę", "CreateGroup")
 </p>
 
-@foreach (Cypisek.ViewModels.Clients.ClientManagerViewModel group in
-                Model)
+@foreach (Cypisek.ViewModels.ClientGroupViewModel group in
+                Model.ClientsGroups)
 {
     <h2>
         @Html.DisplayFor(gitem => group.Name)
     </h2>
 
+    <table class="table">
+        <tr>
+            <th></th>
+            @Html.Partial("_EndPlayerClientsTableHeader", group.EndPlayerClients.First())
+        </tr>
 
-    @Html.Partial("EndPlayerClientsTable", group.EndPlayerClientsVM)
+        @foreach (Cypisek.ViewModels.EndPlayerClientViewModel epClient in
+            group.EndPlayerClients)
+        {
+
+            <tr>
+                <td>@Html.CheckBox("test")</td>
+                @Html.Partial("_EndPlayerClientsTableRow", epClient)
+            </tr>
+        }
+
+    </table>
+    @*@Html.Partial("_EndPlayerClientsTable", group.EndPlayerClients)*@
 }
 
-@*<h2>
+<h2>
     Końcówki bez grupy
-</h2>*@
+</h2>
+@Html.Partial("_EndPlayerClientsTable", Model.ClientsWithoutGroup)
 
 
 
