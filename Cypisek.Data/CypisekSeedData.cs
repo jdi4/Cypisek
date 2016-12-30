@@ -43,21 +43,24 @@ namespace Cypisek.Data
                     Name = "Końcówka 1",
                     ClientGroupID = 2,
                     LastConnectionDate = DateTime.Now,
-                    IsSynchronized = false
+                    IsSynchronized = false,
+                    IsConnected = false
                 },
                 new EndPlayerClient()
                 {
                     Name = "Końcówka 2",
                     ClientGroupID = 1,
                     LastConnectionDate = DateTime.Now,
-                    IsSynchronized = true
+                    IsSynchronized = true,
+                    IsConnected = false
                 },
-                                new EndPlayerClient()
+                new EndPlayerClient()
                 {
                     Name = "Końcówka 3",
                     ClientGroupID = 2,
                     LastConnectionDate = DateTime.Now,
-                    IsSynchronized = false
+                    IsSynchronized = false,
+                    IsConnected = false
                 }
             };
         }

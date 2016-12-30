@@ -11,7 +11,7 @@ namespace Cypisek.ViewModels.Clients
         public int ID { get; set; }
         public string Name { get; set; }
         public DateTime LastConnectionDate { get; set; }
-        //public bool IsConnected { get; set; }
+        public bool IsConnected { get; set; }
         public bool IsSynchronized { get; set; }
 
         public string ScheduleName

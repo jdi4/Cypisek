@@ -22,6 +22,8 @@ namespace Cypisek.App_Start
         public static void Run()
         {
             SetAutofacContainer();
+            SetAutoFacSignalrContatiner();
+
             //Configure AutoMapper
             AutoMapperConfiguration.Configure();
         }
@@ -54,17 +56,8 @@ namespace Cypisek.App_Start
                .AsImplementedInterfaces().InstancePerRequest()
                .WithParameter("storageDirPath", mediaStorageDirLocation);
 
-            //signalR - reqs. nuget for integraiton
-            builder.RegisterHubs(Assembly.GetExecutingAssembly());
-            //container = builder.Build();
-
             IContainer container = builder.Build();
             DependencyResolver.SetResolver(new Autofac.Integration.Mvc.AutofacDependencyResolver(container));
-
-            //var builder2 = new ContainerBuilder();
-            //builder2.RegisterHubs(Assembly.GetExecutingAssembly());
-            //IContainer container2 = builder2.Build();
-            GlobalHost.DependencyResolver = new Autofac.Integration.SignalR.AutofacDependencyResolver(container);
 
             // refresh file db - move to uniform service
             //using (var scope = container.BeginLifetimeScope())
@@ -73,6 +66,27 @@ namespace Cypisek.App_Start
             //var service = scope.Resolve<IMediaStorageService>();
             var service = DependencyResolver.Current.GetService<IMediaStorageService>();
             service.RefreshFileDB();
+        }
+
+        private static void SetAutoFacSignalrContatiner()
+        {
+            var builderSignalR = new ContainerBuilder();
+            builderSignalR.RegisterType<UnitOfWork>().As<IUnitOfWork>().InstancePerLifetimeScope();
+            builderSignalR.RegisterType<DbFactory>().As<IDbFactory>().InstancePerLifetimeScope();
+            builderSignalR.RegisterAssemblyTypes(typeof(EndPlayerClientRepository).Assembly)
+                .Where(t => t.Name.EndsWith("Repository"))
+                .AsImplementedInterfaces().InstancePerLifetimeScope();
+
+            builderSignalR.RegisterAssemblyTypes(typeof(EndPlayerClientService).Assembly)
+               .Where(t => t.Name.EndsWith("Service"))
+               .AsImplementedInterfaces().InstancePerLifetimeScope();
+
+            builderSignalR.RegisterHubs(Assembly.GetExecutingAssembly());
+
+
+            IContainer container2 = builderSignalR.Build();
+            GlobalHost.DependencyResolver = new Autofac.Integration.SignalR.AutofacDependencyResolver(container2);
+
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Cypisek.Data.Infrastructure
 {
+    //: IRepository<T>
     public abstract class RepositoryBase<T> where T : class
     {
         #region Properties

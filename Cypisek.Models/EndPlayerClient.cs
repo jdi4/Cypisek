@@ -11,6 +11,7 @@ namespace Cypisek.Models
         public string Name { get; set; }
         public DateTime LastConnectionDate { get; set; }
         public bool IsSynchronized { get; set; }
+        public bool IsConnected { get; set; }
 
         // FK
         public int? ClientGroupID { get; set; }
