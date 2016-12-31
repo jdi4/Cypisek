@@ -10,6 +10,6 @@ namespace Cypisek.ViewModels
         public int ID { get; set; }
         public string Name { get; set; }
 
-        public virtual ICollection<EndPlayerClientViewModel> EndPlayerClients { get; set; }
+        public virtual List<EndPlayerClientViewModel> EndPlayerClients { get; set; }
     }
 }

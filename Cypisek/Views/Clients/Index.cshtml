@@ -4,43 +4,50 @@
     ViewBag.Title = "Index";
 }
 
+@section scripts
+{
+    @*<script type="text/javascript" src="@Url.Content("/Scripts/jquery-1.10.2.min.js")"></script>*@
+    <script type="text/javascript">
+        $(".checkgroup").click(function () {
+            $('#group' + this.id + ' input:checkbox').prop('checked', this.checked);
+        });
+    </script>
+}
+
+
+
 <h2>Index</h2>
 
 <p>
     @Html.ActionLink("Utwórz grupę", "CreateGroup")
 </p>
 
-@foreach (Cypisek.ViewModels.ClientGroupViewModel group in
-                Model.ClientsGroups)
+@using (Html.BeginForm())
 {
-    <h2>
-        @Html.DisplayFor(gitem => group.Name)
-    </h2>
+    @Html.AntiForgeryToken()
+    int clientsCount = 0;
 
-    <table class="table">
-        <tr>
-            <th></th>
-            @Html.Partial("_EndPlayerClientsTableHeader", group.EndPlayerClients.First())
-        </tr>
-
-        @foreach (Cypisek.ViewModels.EndPlayerClientViewModel epClient in
-            group.EndPlayerClients)
+        foreach (Cypisek.ViewModels.ClientGroupViewModel group in Model.ClientsGroups)
         {
+        <h2>
+            <input type="checkbox" class="checkgroup" id="@group.ID"/>
+            @*@Html.CheckBox("checkgroup" + group.ID)*@
+            @Html.DisplayFor(gitem => group.Name)
+        </h2>
 
-            <tr>
-                <td>@Html.CheckBox("test")</td>
-                @Html.Partial("_EndPlayerClientsTableRow", epClient)
-            </tr>
-        }
+        <div id="group@(group.ID)">
+            @Html.Partial("_EndPlayerClientsSelectTable", group.EndPlayerClients, new ViewDataDictionary { { "clientsCount", clientsCount } })
+        </div>
+        clientsCount += group.EndPlayerClients.Count;
+    }
 
-    </table>
-    @*@Html.Partial("_EndPlayerClientsTable", group.EndPlayerClients)*@
+    <h2>
+        <input type="checkbox" class="checkgroup" id="empty" />
+        Końcówki bez grupy
+    </h2>
+    <div id="groupempty">
+        @Html.Partial("_EndPlayerClientsSelectTable", Model.ClientsWithoutGroup, new ViewDataDictionary() { { "clientsCount", clientsCount } })
+    </div>
+
+    <input type="submit" value="Ustaw grupę" class="btn btn-default" formaction="@Url.Action("SetGroup")" />
 }
-
-<h2>
-    Końcówki bez grupy
-</h2>
-@Html.Partial("_EndPlayerClientsTable", Model.ClientsWithoutGroup)
-
-
-
