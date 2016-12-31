@@ -14,17 +14,19 @@ namespace Cypisek.ViewModels
         public bool IsConnected { get; set; }
         public bool IsSynchronized { get; set; }
 
+        public int ClientGroupID { get; set; }
+        public int ClientScheduleID { get; set; }
+
+        public ClientGroup ClientGroup { get; set; }
+        public ClientSchedule ClientSchedule { get; set; }
+
+        // extra properties
         public string ScheduleName
         {
             get { return ClientSchedule.Name; }
         }
+        public bool IsSelected { get; set; }
 
-        // FK
-        public int ClientGroupID { get; set; }
-        public int ClientScheduleID { get; set; }
 
-        // Nav.properties
-        public ClientGroup ClientGroup { get; set; }
-        public ClientSchedule ClientSchedule { get; set; }
     }
 }

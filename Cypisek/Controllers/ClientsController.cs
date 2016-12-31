@@ -33,7 +33,7 @@ namespace Cypisek.Controllers
 
             var clientsWithoutGroup = endPlayerClientService.GetEndPlayerClientsWithoutGroup();
             model.ClientsWithoutGroup = Mapper
-                .Map<IEnumerable<EndPlayerClient>, ICollection<EndPlayerClientViewModel>>(clientsWithoutGroup);
+                .Map<IEnumerable<EndPlayerClient>, List<EndPlayerClientViewModel>>(clientsWithoutGroup);
 
 
             //var epClients = endPlayerClientService.GetEndPlayerClients()
@@ -61,6 +61,25 @@ namespace Cypisek.Controllers
             //    }
             //}
             return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult SetGroup(List<EndPlayerClientViewModel> clientlist)
+        {
+            try
+            {
+                if(ModelState.IsValid)
+                {
+                    var groups = clientGroupService.GetClientGroups();
+                }
+
+                return RedirectToAction("Index");
+                //return View("Index");
+            }
+            catch
+            {
+                return View();
+            }
         }
 
         // GET: Clients/Details/5

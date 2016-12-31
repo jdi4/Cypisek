@@ -1,0 +1,55 @@
+﻿@model List<Cypisek.ViewModels.EndPlayerClientViewModel>
+
+<table class="table">
+    <tr>
+        <th></th>
+        <th>
+            @Html.DisplayNameFor(model => model[0].ID)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model[0].Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model[0].IsConnected)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model[0].LastConnectionDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model[0].ClientSchedule.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model[0].IsSynchronized)
+        </th>
+    </tr>
+
+@for (int i = 0; i < Model.Count(); i++)
+{
+    <tr>
+        <td>
+            @Html.CheckBox(String.Format("[{0}].IsSelected", i + (int)ViewData["clientsCount"]), false)
+            @Html.Hidden(String.Format("[{0}].ID", i + (int)ViewData["clientsCount"]), Model[i].ID)
+        </td>
+        <td>
+            @Html.DisplayFor(Model => Model[i].ID)
+        </td>
+        <td>
+            @Html.DisplayFor(Model => Model[i].Name)
+        </td>
+        <td>
+            @(Model[i].IsConnected ? "Tak" : "Nie")
+        </td>
+        <td>
+            @Html.DisplayFor(Model => Model[i].LastConnectionDate)
+        </td>
+        <td>
+            @{string scheduleName = Model[i].ClientSchedule == null ? "Brak" : Model[i].ClientSchedule.Name; }
+            @Html.DisplayFor(Model => scheduleName)
+        </td>
+        <td>
+            @(Model[i].IsSynchronized ? "Tak":"Nie")
+        </td>
+    </tr>
+}
+
+</table>
