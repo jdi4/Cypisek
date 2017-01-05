@@ -15,11 +15,13 @@ namespace Cypisek.Controllers
     {
         private readonly IClientGroupService clientGroupService;
         private readonly IEndPlayerClientService endPlayerClientService;
+        private readonly IClientScheduleService clientScheduleService;
 
-        public ClientsController(IClientGroupService cgS, IEndPlayerClientService epcS)
+        public ClientsController(IClientGroupService cgS, IEndPlayerClientService epcS, IClientScheduleService csS)
         {
-            this.clientGroupService = cgS;
-            this.endPlayerClientService = epcS;
+            clientGroupService = cgS;
+            endPlayerClientService = epcS;
+            clientScheduleService = csS;
         }
 
         // GET: Clients
@@ -34,6 +36,10 @@ namespace Cypisek.Controllers
             var clientsWithoutGroup = endPlayerClientService.GetEndPlayerClientsWithoutGroup();
             model.ClientsWithoutGroup = Mapper
                 .Map<IEnumerable<EndPlayerClient>, List<EndPlayerClientViewModel>>(clientsWithoutGroup);
+
+            model.ClientsSchedulesSL = clientScheduleService.GetClientSchedules()
+                .Select(s => new SelectListItem { Value = s.ID.ToString(), Text = s.Name })
+                .ToList();
 
 
             //var epClients = endPlayerClientService.GetEndPlayerClients()
