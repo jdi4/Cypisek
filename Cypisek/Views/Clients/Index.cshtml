@@ -49,5 +49,10 @@
         @Html.Partial("_EndPlayerClientsSelectTable", Model.ClientsWithoutGroup, new ViewDataDictionary() { { "clientsCount", clientsCount } })
     </div>
 
-    <input type="submit" value="Ustaw grupę" class="btn btn-default" formaction="@Url.Action("SetGroup")" />
+    <div class="form-horizontal">
+        @Html.DropDownListFor(Model => Model.ClientsGroupsSL, Model.ClientsGroupsSL)
+        <input type="submit" value="Ustaw grupę" class="btn btn-default" formaction="@Url.Action("SetGroup")" />
+        @Html.DropDownListFor(Model => Model.ClientsSchedulesSL, Model.ClientsSchedulesSL)
+        <input type="submit" value="Ustaw harmonogram" class="btn btn-default" formaction="@Url.Action("SetSchedule")" />
+    </div>
 }
