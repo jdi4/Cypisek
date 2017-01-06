@@ -2,14 +2,17 @@ import glob
 import os
 import wx
 import urllib2
+import random
 from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
+from xml.etree.ElementTree import parse, Element 
+
 
 picList=["rumcajs.jpg","danusia1.jpg"]
 
 class ViewClass(wx.Panel):
     def __init__(self, parent):
-        
+         
         wx.Panel.__init__(self, parent)
         self.currentPicture = 0
         self.totalPictures = 0
@@ -92,29 +95,64 @@ class ViewerFrame(wx.Frame):
         """"""
         self.sizer.Fit(self)
         
-
+class Bunch:
+    def __init__(self,**kwds):
+        self.__dict__.update(kwds)
     
 class main():
     def __init__(self):
-        
-        url= "http://im.rediff.com/movies/2016/mar/15shraddha1.jpg"
+        #globaly obcject to keep schedule informtion
+        self.harm = Bunch() 
+        harmString="Harmonogram1,8,chalets_2.jpg,10,chalets_3.jpg,10,chalets_4.jpg,10,chalets_big.jpg,10,zoom1.jpg,10,zoom2.jpg,10,zoom3.jpg,10,zoom4.jpg,10"   
+        #harmString="TestowyHarm,3,obraz1.jpg,10,obraz2.jpg,10,obraz3.jpg,10" 
+        url= "https://pbs.twimg.com/profile_images/580157476512739328/N2VXzbVN.jpg"
         url2="https://thumbs.dreamstime.com/z/pretty-girl-cup-hot-tea-winter-forest-43545393.jpg"
         print "pobranie i ustawienie zdjecia1"
-        self.getImage("testPic", url)
-        print "pobranie i ustawienie zdjecia2"
-        self.getImage("testPic", url2)
+        self.getImage("chalets_2")
+
         #Publisher.sendMessage("update images", picPaths)
-    
-    def getImage(self,file_name,url):
-    #url="http://cypisek.azurewebsites.net/storage/images/"+str(file_name)
+         
+        self.getSchedule(harmString)
+        print "ID to "+self.harm.ID; 
+        print self.harm.playlist[1];  
+    def getImage(self,file_name):
+        #pic_path="http://cypisek.azurewebsites.net/storage/images/"+str(file_name)
+        pic_path="http://www.camping-oliviers-porto.com/files/jpg/chalets_luxes_pages/"
+        url=pic_path+str(file_name)
         print( 'Pobrano zdjecie:', url)
-        file_name= file_name+'.jpg'
+       # file_name= file_name+'.jpg'
         with open(file_name,'wb') as f:
             f.write(urllib2.urlopen(url).read())
             f.close()
         
         Publisher.sendMessage("load", file_name)   
-        print "zaladowano "+str(file_name)                      
+        print "zaladowano "+str(file_name)
+        
+    def setID(self):
+        ID='ID'
+        for x in range (0,16):
+            ID = ID+str(random.randrange(0, 9))
+        return ID      
+    def internetCheck(self):
+        try :
+            url = "http://cypisek.azurewebsites.net"
+            urllib2.urlopen(url);
+            print"Connected"
+            return 1
+        except :
+            print "Not connect"
+            return 0         
+    def getSchedule(self,harmString):
+        lista=[]
+        words=harmString.split(",")
+        w=int(words[1])
+        arg=2;
+        while (w): 
+            lista.append({"name":words[arg],"time":words[arg+1]})
+            arg+=2
+            w=w-1
+        self.harm=Bunch(schedule_name=words[0],ID=self.setID(),playlist=lista,) 
+        
 if __name__ == "__main__":
     
     app = wx.App()

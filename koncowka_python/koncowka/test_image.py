@@ -1,6 +1,7 @@
 
 import wx
- 
+
+
 class Panel1(wx.Panel):
    
     def __init__(self, parent, id):
