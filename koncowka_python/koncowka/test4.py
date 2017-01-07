@@ -6,6 +6,7 @@ import random
 from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
 import xml.etree.ElementTree as ET
+#from PIL.ImageTk import getimage
 
 picList=["rumcajs.jpg","danusia1.jpg"]
 
@@ -17,10 +18,12 @@ class ViewClass(wx.Panel):
         self.totalPictures = 0
         width, height = wx.DisplaySize()
         self.photoMaxSize = height - 200
-        #self.picPaths = picList
+        self.picPaths = []
         self.picTime = []
        # loadImage()
-        Publisher.subscribe(self.loadImage, ("load"))
+        Publisher.subscribe(self.PlayImages, ("Play Images"))
+        
+
         # layout definition
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
         img = wx.EmptyImage(self.photoMaxSize,self.photoMaxSize)
@@ -32,12 +35,19 @@ class ViewClass(wx.Panel):
         
         self.slideTimer = wx.Timer(None)
         self.slideTimer.Bind(wx.EVT_TIMER, self.update)
-        self.ScheduleTimer(3000)
-        
+    def PlayImages(self,msg):
+        #msg to picPath i picTime
+        self.picPaths=msg.data[0]
+        self.picTime=msg.data[1]
+        self.currentPicture = 0
+        self.totalPictures =len(self.picPaths)
+        self.loadImage(self.picPaths[0])
+        self.setScheduleTimer(int(self.picTime[0]))
+            
     def loadImage(self, msg):
         
         print "wyswietlam: "
-        image=msg.data
+        image=msg
         image_name = os.path.basename(image)
         img = wx.Image(image, wx.BITMAP_TYPE_ANY)
         # scale the image, preserving the aspect ratio
@@ -62,7 +72,7 @@ class ViewClass(wx.Panel):
             self.currentPicture += 1
         self.loadImage(self.picPaths[self.currentPicture]) 
         
-    def ScheduleTimer(self, time):
+    def setScheduleTimer(self, time):
         """
         Starts and stops the slideshow
         """
@@ -70,9 +80,12 @@ class ViewClass(wx.Panel):
         self.slideTimer.Start(time)
             
     def update(self, event):
-        print "Timer over"
-    def test(self):
-        print "test"     
+        
+        self.NextPic()
+        self.setScheduleTimer(int(self.picTime[self.currentPicture]))
+
+        print "Next image in:"+ self.picTime[self.currentPicture]+" milisec"
+     
 
 class ViewerFrame(wx.Frame):
      def __init__(self):
@@ -102,22 +115,27 @@ class main():
     def __init__(self):
         #globaly obcject to keep schedule informtion
         self.harm = Bunch() 
-        harmString="Harmonogram1,10,chalets_2.jpg,10,chalets_2.jpg,10000,chalets_2.jpg,1000,chalets_3.jpg,10,chalets_4.jpg,10,chalets_big.jpg,10,zoom1.jpg,10,zoom2.jpg,10,zoom3.jpg,10,zoom4.jpg,10"   
+                   
+        
+        harmString="Harmonogram1,8,chalets_2.jpg,400,chalets_3.jpg,400,chalets_4.jpg,400,chalets_big.jpg,400,zoom1.jpg,400,zoom2.jpg,400,zoom3.jpg,400,zoom4.jpg,400"   
         #harmString="TestowyHarm,3,obraz1.jpg,10,obraz2.jpg,10,obraz3.jpg,10" 
-        url= "https://pbs.twimg.com/profile_images/580157476512739328/N2VXzbVN.jpg"
-        url2="https://thumbs.dreamstime.com/z/pretty-girl-cup-hot-tea-winter-forest-43545393.jpg"
+        #url= "https://pbs.twimg.com/profile_images/580157476512739328/N2VXzbVN.jpg"
+        #url2="https://thumbs.dreamstime.com/z/pretty-girl-cup-hot-tea-winter-forest-43545393.jpg"
         print "pobranie i ustawienie zdjecia1"
         #self.getImage("chalets_2")
         
         #Publisher.sendMessage("update images", picPaths)
          
         self.getSchedule(harmString)
-        self.writeXML() 
+        self.writeXML()
+        
+         
         self.readXML()
         print "ID to "+self.harm.ID;
         print "plik2 to "+self.harm.files[2];
         print "czas2 to "+self.harm.timers[2];
-
+        
+        self.playSchedule()
         
     def writeXML(self):
         a=ET.Element('config')
@@ -147,18 +165,29 @@ class main():
         # kasowanie harmonogramu
         self.harm=Bunch()
         self.harm=Bunch(schedule_name=scheduleName,ID=ID,files=fileList,timers=timeList) 
-          
+    def playSchedule(self):
+         count=len(self.harm.files)
+         picPath=[]
+         picTime=[]         
+         for index in range(0,count):
+             picPath.append(self.harm.files[index])
+             picTime.append(self.harm.timers[index])
+             self.getImage(self.harm.files[index])
+             
+         msg=[picPath, picTime]    
+         Publisher.sendMessage("Play Images", msg) 
+
     def getImage(self,file_name):
         #pic_path="http://cypisek.azurewebsites.net/storage/images/"+str(file_name)
         pic_path="http://www.camping-oliviers-porto.com/files/jpg/chalets_luxes_pages/"
         url=pic_path+str(file_name)
-        print( 'Pobrano zdjecie:', url)
+        print( 'Pobrano zdjecie:', file_name)
        # file_name= file_name+'.jpg'
         with open(file_name,'wb') as f:
             f.write(urllib2.urlopen(url).read())
             f.close()
         
-        Publisher.sendMessage("load", file_name)   
+          
         print "zaladowano "+str(file_name)
         
     def setID(self):
