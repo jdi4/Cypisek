@@ -29,18 +29,20 @@ namespace Cypisek.Controllers
         {
             var model = new ClientManagerViewModel();
 
-            var groups = clientGroupService.GetClientGroupsIncludeClients();
-            model.ClientsGroups =
-                Mapper.Map<IEnumerable<ClientGroup>, ICollection<ClientGroupViewModel>>(groups);
+            //clients->schedules nav. properties loaded from here
+            var sch = clientScheduleService.GetClientSchedules();
 
-            var clientsWithoutGroup = endPlayerClientService.GetEndPlayerClientsWithoutGroup();
-            model.ClientsWithoutGroup = Mapper
-                .Map<IEnumerable<EndPlayerClient>, List<EndPlayerClientViewModel>>(clientsWithoutGroup);
-
-            model.ClientsSchedulesSL = clientScheduleService.GetClientSchedules()
+            model.ClientsSchedulesSL = sch
                 .Select(s => new SelectListItem { Value = s.ID.ToString(), Text = s.Name })
                 .ToList();
 
+            var groups = clientGroupService.GetClientGroups();
+            model.ClientsGroups =
+                Mapper.Map<IEnumerable<ClientGroup>, ICollection<ClientGroupViewModel>>(groups);
+           
+            var clientsWithoutGroup = endPlayerClientService.GetEndPlayerClientsWithoutGroup();
+            model.ClientsWithoutGroup = Mapper
+                .Map<IEnumerable<EndPlayerClient>, List<EndPlayerClientViewModel>>(clientsWithoutGroup);
 
             //var epClients = endPlayerClientService.GetEndPlayerClients()
             //    .GroupBy(c => c.ClientGroupID);
@@ -76,7 +78,7 @@ namespace Cypisek.Controllers
             {
                 if(ModelState.IsValid)
                 {
-                    var groups = clientGroupService.GetClientGroups();
+                    //var groups = clientGroupService.GetClientGroups();
                 }
 
                 return RedirectToAction("Index");
