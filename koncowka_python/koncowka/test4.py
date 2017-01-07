@@ -5,8 +5,7 @@ import urllib2
 import random
 from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
-from xml.etree.ElementTree import parse, Element 
-
+import xml.etree.ElementTree as ET
 
 picList=["rumcajs.jpg","danusia1.jpg"]
 
@@ -113,8 +112,19 @@ class main():
         #Publisher.sendMessage("update images", picPaths)
          
         self.getSchedule(harmString)
-        print "ID to "+self.harm.ID; 
-        print self.harm.playlist[1];  
+        print "ID to "+self.harm.ID;
+        self.writeXML() 
+        
+    def writeXML(self):
+        a=ET.Element('config')
+        b1=ET.SubElement(a,"ID").text=self.harm.ID
+        b2=ET.SubElement(a,"ScheduleName").text=self.harm.schedule_name
+        #c=ET.SubElement(a,"playlist").text=""
+        for index in range(0,len(self.harm.files)-1):
+            ET.SubElement(a,"file",time=str(self.harm.timers[index])).text=str(self.harm.files[index])
+        tree=ET.ElementTree(a)
+        tree.write("config.xml") 
+           
     def getImage(self,file_name):
         #pic_path="http://cypisek.azurewebsites.net/storage/images/"+str(file_name)
         pic_path="http://www.camping-oliviers-porto.com/files/jpg/chalets_luxes_pages/"
@@ -132,7 +142,8 @@ class main():
         ID='ID'
         for x in range (0,16):
             ID = ID+str(random.randrange(0, 9))
-        return ID      
+        return ID 
+         
     def internetCheck(self):
         try :
             url = "http://cypisek.azurewebsites.net"
@@ -143,15 +154,17 @@ class main():
             print "Not connect"
             return 0         
     def getSchedule(self,harmString):
-        lista=[]
+        lista1=[]
+        lista2=[]
         words=harmString.split(",")
         w=int(words[1])
         arg=2;
         while (w): 
-            lista.append({"name":words[arg],"time":words[arg+1]})
+            lista1.append(words[arg]);
+            lista2.append(words[arg+1])
             arg+=2
             w=w-1
-        self.harm=Bunch(schedule_name=words[0],ID=self.setID(),playlist=lista,) 
+        self.harm=Bunch(schedule_name=words[0],ID=self.setID(),files=lista1,timers=lista2) 
         
 if __name__ == "__main__":
     
