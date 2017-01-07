@@ -102,29 +102,52 @@ class main():
     def __init__(self):
         #globaly obcject to keep schedule informtion
         self.harm = Bunch() 
-        harmString="Harmonogram1,8,chalets_2.jpg,10,chalets_3.jpg,10,chalets_4.jpg,10,chalets_big.jpg,10,zoom1.jpg,10,zoom2.jpg,10,zoom3.jpg,10,zoom4.jpg,10"   
+        harmString="Harmonogram1,10,chalets_2.jpg,10,chalets_2.jpg,10000,chalets_2.jpg,1000,chalets_3.jpg,10,chalets_4.jpg,10,chalets_big.jpg,10,zoom1.jpg,10,zoom2.jpg,10,zoom3.jpg,10,zoom4.jpg,10"   
         #harmString="TestowyHarm,3,obraz1.jpg,10,obraz2.jpg,10,obraz3.jpg,10" 
         url= "https://pbs.twimg.com/profile_images/580157476512739328/N2VXzbVN.jpg"
         url2="https://thumbs.dreamstime.com/z/pretty-girl-cup-hot-tea-winter-forest-43545393.jpg"
         print "pobranie i ustawienie zdjecia1"
-        self.getImage("chalets_2")
-
+        #self.getImage("chalets_2")
+        
         #Publisher.sendMessage("update images", picPaths)
          
         self.getSchedule(harmString)
-        print "ID to "+self.harm.ID;
         self.writeXML() 
+        self.readXML()
+        print "ID to "+self.harm.ID;
+        print "plik2 to "+self.harm.files[2];
+        print "czas2 to "+self.harm.timers[2];
+
         
     def writeXML(self):
         a=ET.Element('config')
         b1=ET.SubElement(a,"ID").text=self.harm.ID
         b2=ET.SubElement(a,"ScheduleName").text=self.harm.schedule_name
+        b4=ET.SubElement(a,"playlist",count=str(len(self.harm.files)))
         #c=ET.SubElement(a,"playlist").text=""
-        for index in range(0,len(self.harm.files)-1):
-            ET.SubElement(a,"file",time=str(self.harm.timers[index])).text=str(self.harm.files[index])
+        for index in range(0,len(self.harm.files)):
+            ET.SubElement(b4,"file",time=str(self.harm.timers[index])).text=str(self.harm.files[index])
         tree=ET.ElementTree(a)
         tree.write("config.xml") 
-           
+        
+    def readXML(self):
+        tree=ET.parse("config.xml")
+        root=tree.getroot()
+        count=int(root[2].attrib.get('count'))
+        ID=root[0].text;
+        scheduleName=root[1].text
+        fileList=[]
+        timeList=[]
+        print "koncowka ID: "+ID
+        print "Harmonogram name: "+scheduleName
+        for index in range(0,count):
+            print "-File:  "+root[2][index].text+", time="+root[2][index].attrib.get("time")
+            fileList.append(root[2][index].text);
+            timeList.append(root[2][index].attrib.get("time"))
+        # kasowanie harmonogramu
+        self.harm=Bunch()
+        self.harm=Bunch(schedule_name=scheduleName,ID=ID,files=fileList,timers=timeList) 
+          
     def getImage(self,file_name):
         #pic_path="http://cypisek.azurewebsites.net/storage/images/"+str(file_name)
         pic_path="http://www.camping-oliviers-porto.com/files/jpg/chalets_luxes_pages/"
