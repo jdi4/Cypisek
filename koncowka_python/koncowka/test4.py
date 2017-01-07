@@ -3,6 +3,8 @@ import os
 import wx
 import urllib2
 import random
+import datetime
+import time
 from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
 import xml.etree.ElementTree as ET
@@ -18,6 +20,7 @@ class ViewClass(wx.Panel):
         self.photoMaxSize = height - 200
         self.picPaths = []
         self.picTime = []
+        self.canPlay=0
        # loadImage()
         Publisher.subscribe(self.PlayImages, ("Play Images"))
         
@@ -34,6 +37,7 @@ class ViewClass(wx.Panel):
         self.slideTimer = wx.Timer(None)
         self.slideTimer.Bind(wx.EVT_TIMER, self.update)
     def PlayImages(self,msg):
+        
         #msg to picPath i picTime
         self.picPaths=msg.data[0]
         self.picTime=msg.data[1]
@@ -41,7 +45,7 @@ class ViewClass(wx.Panel):
         self.totalPictures =len(self.picPaths)
         self.loadImage(self.picPaths[0])
         self.setScheduleTimer(int(self.picTime[0]))
-            
+        
     def loadImage(self, msg):
         
         print "wyswietlam: "
@@ -117,7 +121,7 @@ class main():
         if (self.internetCheck()):
                    
             
-            harmString="Harmonogram1,8,chalets_2.jpg,400,chalets_3.jpg,800,chalets_4.jpg,700,chalets_big.jpg,999,zoom1.jpg,854,zoom2.jpg,924,zoom3.jpg,808,zoom4.jpg,980"   
+            harmString="Harmonogram1,07/01/2017 16:02,09/01/2017 11:46,8,chalets_2.jpg,400,chalets_3.jpg,800,chalets_4.jpg,700,chalets_big.jpg,999,zoom1.jpg,854,zoom2.jpg,924,zoom3.jpg,808,zoom4.jpg,980"   
             #harmString="TestowyHarm,3,obraz1.jpg,10,obraz2.jpg,10,obraz3.jpg,10" 
             #url= "https://pbs.twimg.com/profile_images/580157476512739328/N2VXzbVN.jpg"
             #url2="https://thumbs.dreamstime.com/z/pretty-girl-cup-hot-tea-winter-forest-43545393.jpg"
@@ -137,7 +141,7 @@ class main():
     def writeXML(self):
         a=ET.Element('config')
         b1=ET.SubElement(a,"ID").text=self.harm.ID
-        b2=ET.SubElement(a,"ScheduleName").text=self.harm.schedule_name
+        b2=ET.SubElement(a,"ScheduleName",endTime=self.harm.endTime,startTime=self.harm.startTime).text=self.harm.schedule_name
         b4=ET.SubElement(a,"playlist",count=str(len(self.harm.files)))
         #c=ET.SubElement(a,"playlist").text=""
         for index in range(0,len(self.harm.files)):
@@ -156,26 +160,60 @@ class main():
         print "koncowka ID: "+ID
         print "Harmonogram name: "+scheduleName
         print "Files count: "+str(count)
+        startTime=root[1].attrib.get("startTime")
+        endTime=root[1].attrib.get("endTime")
         for index in range(0,count):
             print "-File:  "+root[2][index].text+", time="+root[2][index].attrib.get("time")
             fileList.append(root[2][index].text);
             timeList.append(root[2][index].attrib.get("time"))
         # kasowanie harmonogramu
         self.harm=Bunch()
-        self.harm=Bunch(schedule_name=scheduleName,ID=ID,files=fileList,timers=timeList) 
+        self.harm=Bunch(schedule_name=scheduleName,ID=ID,startTime=startTime,endTime=endTime,files=fileList,timers=timeList) 
     def playSchedule(self,offline=0):
          count=len(self.harm.files)
          picPath=[]
-         picTime=[]         
+         picTime=[]   
+         playStart=self.harm.startTime;
+         playEnd=self.harm.endTime;
+         
+         playStart=time.strptime(playStart,"%d/%m/%Y %H:%M")
+         playEnd=time.strptime(playEnd,"%d/%m/%Y %H:%M")
+         #1 arg to data 2arg to czas
+         #playStart=playStart.split(" ")
+         #playEnd=playEnd.split(" ")
+         nowTime=datetime.datetime.now()
+         nowTime=nowTime.strftime("%d/%m/%Y %H:%M")
+         nowTime=time.strptime(nowTime,"%d/%m/%Y %H:%M")
+         print(nowTime)
+         print(playStart)  
+         print(playEnd)   
          for index in range(0,count):
              picPath.append(self.harm.files[index])
              picTime.append(self.harm.timers[index])
              if (offline==0):
-                 self.getImage(self.harm.files[index])
+                self.getImage(self.harm.files[index])
              
-         msg=[picPath, picTime]    
-         Publisher.sendMessage("Play Images", msg) 
-
+         msg=[picPath, picTime]
+         isHarm=1
+         while(isHarm):
+             nowTime=datetime.datetime.now()
+             nowTime=nowTime.strftime("%d/%m/%Y %H:%M")
+             nowTime=time.strptime(nowTime,"%d/%m/%Y %H:%M")
+             
+             if(nowTime>=playStart) and (nowTime<=playEnd):
+                isHarm=0
+                print "Harmonogram start..."
+                
+                Publisher.sendMessage("Play Images", msg)
+             else:
+                print "Oczekiwanie na wlaczenie harmonogramu..."  
+                
+                print "----Aktualny czas: "+str(nowTime.tm_hour)+":"+str(nowTime.tm_min)+" "+str(nowTime.tm_mday)+"/"+str(nowTime.tm_mon)+"/"+str(nowTime.tm_year)
+                print "Harmonogram start: "+str(playStart.tm_hour)+":"+str(playStart.tm_min)+" "+str(playStart.tm_mday)+"/"+str(playStart.tm_mon)+"/"+str(playStart.tm_year)
+                print ""
+                time.sleep(5)  
+                #self.waitToStart(msg,playStart,playEnd)            
+    
     def getImage(self,file_name):
         #pic_path="http://cypisek.azurewebsites.net/storage/images/"+str(file_name)
         pic_path="http://www.camping-oliviers-porto.com/files/jpg/chalets_luxes_pages/"
@@ -199,7 +237,7 @@ class main():
         try :
             url = "http://cypisek.azurewebsites.net"
             urllib2.urlopen(url);
-            print"Connected"
+            print"Connected - ONLINE MODE"
             return 1
         except :
             print "Not connect - OFFLINE MODE"
@@ -208,14 +246,16 @@ class main():
         lista1=[]
         lista2=[]
         words=harmString.split(",")
-        w=int(words[1])
-        arg=2;
+        startTime=words[1]
+        endTime=words[2]
+        w=int(words[3])
+        arg=4;
         while (w): 
             lista1.append(words[arg]);
             lista2.append(words[arg+1])
             arg+=2
             w=w-1
-        self.harm=Bunch(schedule_name=words[0],ID=self.setID(),files=lista1,timers=lista2) 
+        self.harm=Bunch(schedule_name=words[0],startTime=startTime,endTime=endTime,ID=self.setID(),files=lista1,timers=lista2) 
         
 if __name__ == "__main__":
     
