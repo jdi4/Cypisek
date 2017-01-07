@@ -40,6 +40,11 @@
                 $('#discussion').append('<li><strong>' + 'SERWER'
                     + '</strong>: ' + 'tozsamosc potwierdzona = ' + htmlEncode(confirmed) + '</li>');
             };
+            chat.client.test1 = function (dataFromServer) {
+                // Add the message to the page.
+                $('#discussion').append('<li><strong>' + 'DANE LOOP'
+                    + '</strong>: ' + htmlEncode(dataFromServer) + '</li>');
+            };
             // Get the user name and store it to prepend to messages.
             //$('#displayname').val(prompt('Enter your name:', ''));
             // Set initial focus to message input box.
