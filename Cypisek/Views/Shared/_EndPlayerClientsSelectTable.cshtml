@@ -27,8 +27,8 @@
 {
     <tr>
         <td>
-            @Html.CheckBox(String.Format("[{0}].IsSelected", i + (int)ViewData["clientsCount"]), false)
-            @Html.Hidden(String.Format("[{0}].ID", i + (int)ViewData["clientsCount"]), Model[i].ID)
+            @Html.CheckBox(String.Format("ClientsList[{0}].IsSelected", i + (int)ViewData["clientsCount"]), false)
+            @Html.Hidden(String.Format("ClientsList[{0}].ID", i + (int)ViewData["clientsCount"]), Model[i].ID)
         </td>
         <td>
             @Html.DisplayFor(Model => Model[i].ID)
@@ -43,7 +43,7 @@
             @Html.DisplayFor(Model => Model[i].LastConnectionDate)
         </td>
         <td>
-            @{string scheduleName = Model[i].ClientSchedule == null ? "Brak" : Model[i].ClientSchedule.Name; }
+            @{string scheduleName = Model[i].ClientSchedule == null ? "--Brak--" : Model[i].ClientSchedule.Name; }
             @Html.DisplayFor(Model => scheduleName)
         </td>
         <td>
