@@ -10,7 +10,7 @@ from signalr import Connection
 from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
 import xml.etree.ElementTree as ET
-import threading
+
 
 class ViewClass(wx.Panel):
     def __init__(self, parent):
@@ -114,70 +114,64 @@ class ViewerFrame(wx.Frame):
 class Bunch:
     def __init__(self,**kwds):
         self.__dict__.update(kwds)
-
-        
-class mainCon(threading.Thread):
+    
+class main():
     def __init__(self):
-        print "Thread init..."
-        threading.Thread.__init__(self)
         #globaly obcject to keep schedule informtion
         self.harm = Bunch() 
- 
-    def run(self):
-        print "Thread run..."
         def receiveData(data="NULL"):
             print "Receive data: "+str(data) 
             #self.harmString=data
         def test1(data="NULL"):
             print "---------------Jordan mowi "+str(data) 
-            #self.harmString=data        
-        if(self.internetCheck()):
-                    
+            #self.harmString=data    
+        if (self.internetCheck()):
+                   
+            
+            #harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,8,chalets_2.jpg,400,chalets_3.jpg,800,chalets_4.jpg,700,chalets_big.jpg,999,zoom1.jpg,854,zoom2.jpg,924,zoom3.jpg,808,zoom4.jpg,980"   
+            self.harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,800,620_PSACD_l-150x150.jpg,800,Copley-Square-21019-150x150.jpg,800,Groups_GroupSupport_Team-300x300.jpg,800"
+            #harmString="TestowyHarm,3,obraz1.jpg,10,obraz2.jpg,10,obraz3.jpg,10" 
+            #url= "https://pbs.twimg.com/profile_images/580157476512739328/N2VXzbVN.jpg"
+            #url2="https://thumbs.dreamstime.com/z/pretty-girl-cup-hot-tea-winter-forest-43545393.jpg"
+            #self.getImage("chalets_2")
+            
+            #Publisher.sendMessage("update images", picPaths)
              
-             #harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,8,chalets_2.jpg,400,chalets_3.jpg,800,chalets_4.jpg,700,chalets_big.jpg,999,zoom1.jpg,854,zoom2.jpg,924,zoom3.jpg,808,zoom4.jpg,980"   
-             self.harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,800,620_PSACD_l-150x150.jpg,800,Copley-Square-21019-150x150.jpg,800,Groups_GroupSupport_Team-300x300.jpg,800"
-             #harmString="TestowyHarm,3,obraz1.jpg,10,obraz2.jpg,10,obraz3.jpg,10" 
-             #url= "https://pbs.twimg.com/profile_images/580157476512739328/N2VXzbVN.jpg"
-             #url2="https://thumbs.dreamstime.com/z/pretty-girl-cup-hot-tea-winter-forest-43545393.jpg"
-             #self.getImage("chalets_2")
-             
-             #Publisher.sendMessage("update images", picPaths)
+            with Session() as session:
+                connection = Connection("http://cypisek.azurewebsites.net/signalr", session)
+                chat = connection.register_hub('contentHub') #ContentHub
+                #start a connection
+                connection.start()    
+                
+            
+          # print test;
+            #chat.client.
+            #chat.client.on('setHarm', setHarm)
+                       #chat.client.on('setImage', setImage)  
+            #wysylanie ID koncowki
+            
+            #Autentykacja koncowki
+            chat.server.invoke('PoorAuthenticate','1')
+            chat.client.on('receiveData', receiveData)
+            chat.client.on('test1', test1) 
+ 
+            chat.server.invoke('InvokeSending')
+            #with connection:
+            #  connection.wait(100)
               
-             with Session() as session:
-                 connection = Connection("http://cypisek.azurewebsites.net/signalr", session)
-                 chat = connection.register_hub('contentHub') #ContentHub
-                 #start a connection
-                 connection.start()    
-                 
              
-           # print test;
-             #chat.client.
-             #chat.client.on('setHarm', setHarm)
-                        #chat.client.on('setImage', setImage)  
-             #wysylanie ID koncowki
              
-             #Autentykacja koncowki
-             print "Autentykacja jako ID 2"
              
-             chat.server.invoke('PoorAuthenticate','2')
-             
-             chat.client.on('receiveData', receiveData)
-             chat.client.on('test1', test1) 
-  
-             chat.server.invoke('InvokeSending')
-             #with connection:
-             #  connection.wait(100)
-              
-             self.getSchedule(self.harmString)
-             self.writeXML()
-             self.playSchedule()
-             
+            self.getSchedule(self.harmString)
+            self.writeXML()
+            self.playSchedule()
+            
         else:
-             self.readXML()
-             #playschedule bez pobierania
-             self.playSchedule(1)  
-
-    
+            self.readXML()
+            #playschedule bez pobierania
+            self.playSchedule(1)  
+   
+       
     def setHarm(self):
         self.harm()       
     def writeXML(self):
@@ -299,11 +293,10 @@ class mainCon(threading.Thread):
             w=w-1
         self.harm=Bunch(schedule_name=words[0],startTime=startTime,endTime=endTime,ID=self.setID(),files=lista1,timers=lista2) 
         
-glowna= mainCon()
-glowna.start()        
 if __name__ == "__main__":
     
     app = wx.App()
     frame = ViewerFrame()
+    main()
     app.MainLoop()
         
