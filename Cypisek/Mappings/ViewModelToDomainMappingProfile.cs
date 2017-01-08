@@ -17,7 +17,9 @@ namespace Cypisek.Mappings
             CreateMap<MediaFileSelectViewModel, MediaFile>();
 
             CreateMap<ClientScheduleFormViewModel, ClientSchedule>();
-                //.ForMember(dest => dest.MediaFilessList;
+            //.ForMember(dest => dest.MediaFilessList;
+
+            CreateMap<ClientGroupFormModel, ClientGroup>();
         }
 
         public override string ProfileName

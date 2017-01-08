@@ -142,19 +142,25 @@ namespace Cypisek.Controllers
             return View();
         }
 
-        // GET: Clients/Create
-        public ActionResult Create()
+        // GET: Clients/CreateGroup
+        public ActionResult CreateGroup()
         {
             return View();
         }
 
-        // POST: Clients/Create
+        // POST: Clients/CreateGroup
         [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public ActionResult CreateGroup(ClientGroupFormModel formModel)
         {
             try
             {
-                // TODO: Add insert logic here
+                if (ModelState.IsValid)
+                {
+                    var newGroup = Mapper.Map< ClientGroupFormModel, ClientGroup>(formModel);
+
+                    clientGroupService.CreateClientGroup(newGroup);
+                    clientGroupService.SaveClientGroup();
+                }
 
                 return RedirectToAction("Index");
             }

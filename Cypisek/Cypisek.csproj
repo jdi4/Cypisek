@@ -243,6 +243,7 @@
     <Compile Include="Mappings\DomainToViewModelMappingProfile.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ViewModels\ClientGroupViewModel.cs" />
+    <Compile Include="ViewModels\Clients\ClientGroupFormModel.cs" />
     <Compile Include="ViewModels\Clients\ClientManagerViewModel.cs" />
     <Compile Include="ViewModels\Clients\ClientManagerFormModel.cs" />
     <Compile Include="ViewModels\EndPlayerClientViewModel.cs" />
@@ -301,6 +302,7 @@
     <Content Include="Views\Shared\_EndPlayerClientsTableHeader.cshtml" />
     <Content Include="Views\Shared\_EndPlayerClientsTableRow.cshtml" />
     <Content Include="Views\Shared\_EndPlayerClientsSelectTable.cshtml" />
+    <Content Include="Views\Clients\CreateGroup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
