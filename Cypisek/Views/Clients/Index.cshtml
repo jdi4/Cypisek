@@ -1,29 +1,68 @@
-﻿@model IEnumerable<Cypisek.ViewModels.Clients.ClientManagerViewModel>
+﻿@model Cypisek.ViewModels.Clients.ClientManagerViewModel
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Lista końcówek";
 }
 
-<h2>Index</h2>
+@section scripts
+{
+    <script type="text/javascript">
+        $(".checkgroup").click(function () {
+            $('#group' + this.id + ' input:checkbox').prop('checked', this.checked);
+        });
+    </script>
+}
+
+@section styles
+{
+    <style type="text/css">
+        h2{
+            display: inline
+        }
+    </style>
+}
+
+<h2>Lista końcówek</h2>
 
 <p>
-    @Html.ActionLink("Create New", "Create")
+    @Html.ActionLink("Utwórz grupę", "CreateGroup")
 </p>
 
-@foreach (Cypisek.ViewModels.Clients.ClientManagerViewModel group in
-                Model)
+@using (Html.BeginForm())
 {
+    @Html.AntiForgeryToken()
+    int clientsCount = 0;
+
+    foreach (Cypisek.ViewModels.ClientGroupViewModel group in Model.ClientsGroups)
+    {
+        <h2>
+            <input type="checkbox" class="checkgroup" id="@group.ID" />
+            @Html.DisplayFor(gitem => group.Name)
+        </h2>
+        <div class="pull-right">
+            @Html.ActionLink("Usuń grupę", "DeleteGroup", new { id = group.ID })
+        </div>
+        <div id="group@(group.ID)">
+            @if (group.EndPlayerClients.Count > 0)
+            {
+                @Html.Partial("_EndPlayerClientsSelectTable", group.EndPlayerClients, new ViewDataDictionary { { "clientsCount", clientsCount } })
+            }
+        </div>
+        clientsCount += group.EndPlayerClients.Count;
+    }
+
     <h2>
-        @Html.DisplayFor(gitem => group.Name)
+        <input type="checkbox" class="checkgroup" id="empty" />
+        Końcówki bez grupy
     </h2>
+    <div id="groupempty">
+        @Html.Partial("_EndPlayerClientsSelectTable", Model.ClientsWithoutGroup, new ViewDataDictionary() { { "clientsCount", clientsCount } })
+    </div>
 
-
-    @Html.Partial("EndPlayerClientsTable", group.EndPlayerClientsVM)
+    <div class="form-horizontal">
+        @Html.DropDownListFor(Model => Model.ClientsGroupsSL, Model.ClientsGroupsSL, "--Brak grupy--")
+        <input type="submit" value="Ustaw grupę" class="btn btn-default" formaction="@Url.Action("SetGroup")" />
+        @Html.DropDownListFor(Model => Model.ClientsSchedulesSL, Model.ClientsSchedulesSL, "--Brak harmonogramu--")
+        <input type="submit" value="Ustaw harmonogram" class="btn btn-default" formaction="@Url.Action("SetSchedule")" />
+    </div>
 }
-
-@*<h2>
-    Końcówki bez grupy
-</h2>*@
-
-
-

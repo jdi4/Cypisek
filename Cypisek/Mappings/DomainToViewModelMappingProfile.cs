@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Cypisek.Models;
+using Cypisek.ViewModels;
 using Cypisek.ViewModels.Clients;
 using Cypisek.ViewModels.MediaLibrary;
 using Cypisek.ViewModels.Schedules;
@@ -15,8 +16,12 @@ namespace Cypisek.Mappings
         public DomainToViewModelMappingProfile()
         {
             CreateMap<EndPlayerClient, EndPlayerClientViewModel>();
-            CreateMap<ClientGroup, ClientManagerViewModel>()
-                .ForMember(dest => dest.EndPlayerClientsVM, opt => opt.MapFrom(src => src.EndPlayerClients));
+
+            //CreateMap<ClientGroup, ClientManagerViewModel>()
+            //    .ForMember(dest => dest.ClientsWithoutGroup, opt => opt.MapFrom(src => src.EndPlayerClients));
+
+            CreateMap<ClientGroup, ClientGroupViewModel>()
+                .ForMember(dest => dest.EndPlayerClients, opt => opt.MapFrom(src => src.EndPlayerClients));
 
             CreateMap<ClientSchedule, ClientScheduleViewModel>();
 
