@@ -159,7 +159,7 @@ namespace Cypisek.Controllers
                     var newGroup = Mapper.Map< ClientGroupFormModel, ClientGroup>(formModel);
 
                     clientGroupService.CreateClientGroup(newGroup);
-                    clientGroupService.SaveClientGroup();
+                    clientGroupService.SaveChanges();
                 }
 
                 return RedirectToAction("Index");
@@ -192,19 +192,22 @@ namespace Cypisek.Controllers
             }
         }
 
-        // GET: Clients/Delete/5
-        public ActionResult Delete(int id)
+        // GET: Clients/DeleteGroup
+        public ActionResult DeleteGroup(int id)
         {
-            return View();
+            var model = Mapper.Map<ClientGroup, ClientGroupViewModel>(
+                clientGroupService.GetClientGroup(id));
+            return View(model);
         }
 
-        // POST: Clients/Delete/5
+        // POST: Clients/DeleteGroup
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult DeleteGroup(int id, FormCollection collection)
         {
             try
             {
-                // TODO: Add delete logic here
+                clientGroupService.DeleteClientGroup(id);
+                clientGroupService.SaveChanges();
 
                 return RedirectToAction("Index");
             }

@@ -1,0 +1,42 @@
+﻿@model Cypisek.ViewModels.ClientGroupViewModel
+
+@{
+    ViewBag.Title = "Usuwanie grupy";
+}
+
+<h2>Usuwanie grupy</h2>
+
+<h3>Potwierdź usunięcie grupy - końcówki nie będą przypisane do żadnej grupy.
+    </h3>
+<div>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ID)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ID)
+        </dd>
+
+    </dl>
+
+    @*@Html.Partial("_EndPlayerClientsTable.cshtml", Model.EndPlayerClients)*@
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            <input type="submit" value="Usuń" class="btn btn-default" /> |
+            @Html.ActionLink("Powrót do listy", "Index")
+        </div>
+    }
+</div>

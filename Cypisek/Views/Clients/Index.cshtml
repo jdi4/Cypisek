@@ -1,12 +1,11 @@
 ﻿@model Cypisek.ViewModels.Clients.ClientManagerViewModel
 
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "Lista końcówek";
 }
 
 @section scripts
 {
-    @*<script type="text/javascript" src="@Url.Content("/Scripts/jquery-1.10.2.min.js")"></script>*@
     <script type="text/javascript">
         $(".checkgroup").click(function () {
             $('#group' + this.id + ' input:checkbox').prop('checked', this.checked);
@@ -14,9 +13,16 @@
     </script>
 }
 
+@section styles
+{
+    <style type="text/css">
+        h2{
+            display: inline
+        }
+    </style>
+}
 
-
-<h2>Index</h2>
+<h2>Lista końcówek</h2>
 
 <p>
     @Html.ActionLink("Utwórz grupę", "CreateGroup")
@@ -27,15 +33,20 @@
     @Html.AntiForgeryToken()
     int clientsCount = 0;
 
-        foreach (Cypisek.ViewModels.ClientGroupViewModel group in Model.ClientsGroups)
-        {
+    foreach (Cypisek.ViewModels.ClientGroupViewModel group in Model.ClientsGroups)
+    {
         <h2>
-            <input type="checkbox" class="checkgroup" id="@group.ID"/>
+            <input type="checkbox" class="checkgroup" id="@group.ID" />
             @Html.DisplayFor(gitem => group.Name)
         </h2>
-
+        <div class="pull-right">
+            @Html.ActionLink("Usuń grupę", "DeleteGroup", new { id = group.ID })
+        </div>
         <div id="group@(group.ID)">
-            @Html.Partial("_EndPlayerClientsSelectTable", group.EndPlayerClients, new ViewDataDictionary { { "clientsCount", clientsCount } })
+            @if (group.EndPlayerClients.Count > 0)
+            {
+                @Html.Partial("_EndPlayerClientsSelectTable", group.EndPlayerClients, new ViewDataDictionary { { "clientsCount", clientsCount } })
+            }
         </div>
         clientsCount += group.EndPlayerClients.Count;
     }

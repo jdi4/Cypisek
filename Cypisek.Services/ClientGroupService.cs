@@ -15,17 +15,20 @@ namespace Cypisek.Services
         IEnumerable<ClientGroup> GetClientGroupsIncludeClients();
         ClientGroup GetClientGroup(int id);
         void CreateClientGroup(ClientGroup ClientGroup);
-        void SaveClientGroup();
+        void DeleteClientGroup(int id);
+        void SaveChanges();
     }
 
     public class ClientGroupService : IClientGroupService
     {
         private readonly IClientGroupRepository ClientGroupsRepository;
+        private readonly IEndPlayerClientRepository endPlayerClientRepository;
         private readonly IUnitOfWork unitOfWork;
 
-        public ClientGroupService(IClientGroupRepository ClientGroupsRepository, IUnitOfWork unitOfWork)
+        public ClientGroupService(IClientGroupRepository ClientGroupsRepository, IEndPlayerClientRepository endPlayerClientRepository, IUnitOfWork unitOfWork)
         {
             this.ClientGroupsRepository = ClientGroupsRepository;
+            this.endPlayerClientRepository = endPlayerClientRepository;
             this.unitOfWork = unitOfWork;
         }
 
@@ -48,7 +51,7 @@ namespace Cypisek.Services
             ClientGroupsRepository.Add(ClientGroup);
         }
 
-        public void SaveClientGroup()
+        public void SaveChanges()
         {
             unitOfWork.Commit();
         }
@@ -56,6 +59,17 @@ namespace Cypisek.Services
         public IEnumerable<ClientGroup> GetClientGroupsIncludeClients()
         {
             return ClientGroupsRepository.GetAllIncludeClients();
+        }
+
+        public void DeleteClientGroup(int id)
+        {
+            var clientGroup = ClientGroupsRepository.GetById(id);
+            clientGroup.EndPlayerClients.ToList().ForEach(c => 
+                {
+                    c.ClientGroupID = null;
+                    endPlayerClientRepository.Edit(c);
+                });
+            ClientGroupsRepository.Delete(clientGroup);
         }
 
         #endregion

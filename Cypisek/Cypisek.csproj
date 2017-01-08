@@ -303,6 +303,7 @@
     <Content Include="Views\Shared\_EndPlayerClientsTableRow.cshtml" />
     <Content Include="Views\Shared\_EndPlayerClientsSelectTable.cshtml" />
     <Content Include="Views\Clients\CreateGroup.cshtml" />
+    <Content Include="Views\Clients\DeleteGroup.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
