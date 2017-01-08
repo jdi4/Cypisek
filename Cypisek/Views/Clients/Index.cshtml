@@ -31,7 +31,6 @@
         {
         <h2>
             <input type="checkbox" class="checkgroup" id="@group.ID"/>
-            @*@Html.CheckBox("checkgroup" + group.ID)*@
             @Html.DisplayFor(gitem => group.Name)
         </h2>
 
@@ -50,9 +49,9 @@
     </div>
 
     <div class="form-horizontal">
-        @Html.DropDownListFor(Model => Model.ClientsGroupsSL, Model.ClientsGroupsSL)
+        @Html.DropDownListFor(Model => Model.ClientsGroupsSL, Model.ClientsGroupsSL, "--Brak grupy--")
         <input type="submit" value="Ustaw grupę" class="btn btn-default" formaction="@Url.Action("SetGroup")" />
-        @Html.DropDownListFor(Model => Model.ClientsSchedulesSL, Model.ClientsSchedulesSL)
+        @Html.DropDownListFor(Model => Model.ClientsSchedulesSL, Model.ClientsSchedulesSL, "--Brak harmonogramu--")
         <input type="submit" value="Ustaw harmonogram" class="btn btn-default" formaction="@Url.Action("SetSchedule")" />
     </div>
 }

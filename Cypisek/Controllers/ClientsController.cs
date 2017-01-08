@@ -40,6 +40,11 @@ namespace Cypisek.Controllers
             model.ClientsGroups =
                 Mapper.Map<IEnumerable<ClientGroup>, ICollection<ClientGroupViewModel>>(groups);
            
+            model.ClientsGroupsSL = groups
+                    .Select(g => new SelectListItem { Text = g.Name, Value = g.ID.ToString() })
+                    .ToList();
+            //model.ClientsGroupsSL.Add(new SelectListItem { Text = "Brak grupy", Value = "-1" });
+
             var clientsWithoutGroup = endPlayerClientService.GetEndPlayerClientsWithoutGroup();
             model.ClientsWithoutGroup = Mapper
                 .Map<IEnumerable<EndPlayerClient>, List<EndPlayerClientViewModel>>(clientsWithoutGroup);
@@ -72,17 +77,58 @@ namespace Cypisek.Controllers
         }
 
         [HttpPost]
-        public ActionResult SetGroup(List<EndPlayerClientViewModel> clientlist)
+        public ActionResult SetGroup(ClientManagerFormModel formModel)
         {
             try
             {
                 if(ModelState.IsValid)
                 {
-                    //var groups = clientGroupService.GetClientGroups();
+                    foreach (var client in formModel.ClientsList)
+                    {
+                        if (client.IsSelected)
+                        {
+                            var toEdit = endPlayerClientService.GetEndPlayerClient(client.ID);
+                            if (toEdit != null)
+                            {
+                                toEdit.ClientGroupID = formModel.ClientsGroupsSL;
+                                endPlayerClientService.EditEndPlayerClient(toEdit);
+                            }
+                        }
+                    }
+                    endPlayerClientService.SaveEndPlayerClient();
                 }
 
                 return RedirectToAction("Index");
-                //return View("Index");
+            }
+            catch
+            {
+                return RedirectToAction("Index");//return View("Index");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult SetSchedule(ClientManagerFormModel formModel)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    foreach (var client in formModel.ClientsList)
+                    {
+                        if (client.IsSelected)
+                        {
+                            var toEdit = endPlayerClientService.GetEndPlayerClient(client.ID);
+                            if (toEdit != null)
+                            {
+                                toEdit.ClientScheduleID = formModel.ClientsSchedulesSL;
+                                endPlayerClientService.EditEndPlayerClient(toEdit);
+                            }
+                        }
+                    }
+                }
+                endPlayerClientService.SaveEndPlayerClient();
+
+                return RedirectToAction("Index");
             }
             catch
             {
