@@ -16,6 +16,8 @@ namespace Cypisek.Services
         void CreateClientSchedule(ClientSchedule ClientSchedule);
         void CreateClientSchedule(ClientSchedule ClientSchedule, IEnumerable<int> filesIDs);
         void SaveClientSchedule();
+
+        string GetScheduleAsString(int scheduleID);
     }
 
     public class ClientScheduleService : IClientScheduleService
@@ -68,6 +70,30 @@ namespace Cypisek.Services
                     PlayTime = 10
                 });
             }
+        }
+
+        public string GetScheduleAsString(int scheduleID)
+        {
+            var schedule = clientSchedulesRepository.GetById(scheduleID);
+            string dateformat = @"MM\/dd\/yyyy HH:mm";
+
+            string scheduleString = String.Format("{0},{1},{2}",
+                schedule.Name,
+                schedule.StartDate.ToString(dateformat),
+                schedule.ExpirationDate.ToString(dateformat)
+                );
+
+            var playlist = clientScheduleMediaFilesListRepository
+                .GetManyIncludeMediaFiles(p => p.ClientScheduleID == scheduleID);
+
+            System.Text.StringBuilder sb = new System.Text.StringBuilder(scheduleString);
+
+            foreach (var item in playlist)
+            {
+                sb.AppendFormat(",{0},{1}",item.PlayTime, item.MediaFile.Name);
+            }
+
+            return sb.ToString();
         }
 
         #endregion

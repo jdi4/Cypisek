@@ -123,7 +123,25 @@ namespace Cypisek.Controllers
                             if (toEdit != null)
                             {
                                 toEdit.ClientScheduleID = formModel.ClientsSchedulesSL;
+                                toEdit.IsSynchronized = false;
                                 endPlayerClientService.EditEndPlayerClient(toEdit);
+
+                                if (formModel.ClientsSchedulesSL != null)
+                                {
+                                    var context = GlobalHost.ConnectionManager.GetHubContext<ContentHub>();
+                                    string connID = ContentHub.GetClientConnection(toEdit.ID);
+                                    string message = clientScheduleService.GetScheduleAsString((int)formModel.ClientsSchedulesSL);
+
+                                    if (connID != null)
+                                    {
+                                        context.Clients.Client(connID).test1(message);
+                                    }
+
+                                    else
+                                    {
+                                        TempData["message"] = "Brak podlaczonego klienta";
+                                    }
+                                }
                             }
                         }
                     }
