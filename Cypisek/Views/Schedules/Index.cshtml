@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<Cypisek.ViewModels.Schedules.ClientScheduleViewModel>
 
 @{
-    ViewBag.Title = "Schedules Index";
+    ViewBag.Title = "Lista harmonogramów";
 }
 
-<h2>Schedules Index</h2>
+<h2>Lista harmonogramów</h2>
 
 @Html.ActionLink("Dodaj harmonogram", "Create")
 
@@ -47,8 +47,8 @@
                 @Html.DisplayFor(modelItem => item.ClientsCount)
             </td>
             <td>
-                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                @*@Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.ID })*@
             </td>
         </tr>
     }

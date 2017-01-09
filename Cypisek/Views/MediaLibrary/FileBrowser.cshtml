@@ -1,10 +1,10 @@
 ﻿@model IEnumerable<Cypisek.ViewModels.MediaLibrary.MediaFileViewModel>
 
 @{
-    ViewBag.Title = "File Browser";
+    ViewBag.Title = "Biblioteka multimediów";
 }
 
-<h2>File Browser</h2>
+<h2>Biblioteka multimediów</h2>
 
 
 <table class="table">
@@ -27,8 +27,8 @@
             @Html.DisplayFor(modelItem => item.FileSize)
         </td>
         <td>
-            @Html.ActionLink("Details", "Details", new { id=item.ID }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.ID })
+            @*@Html.ActionLink("Details", "Details", new { id=item.ID }) |
+            @Html.ActionLink("Delete", "Delete", new { id=item.ID })*@
         </td>
     </tr>
 }
@@ -39,9 +39,9 @@
                 FormMethod.Post,
                 new { enctype = "multipart/form-data" }))
 {
-    <label for="file">Upload File:</label>
+    <label for="file">Plik do wysłania:</label>
     <input type="file" name="file" id="file" /><br/>
-    <input type="submit" value="Upload File" />
+    <input type="submit" value="Wyślij plik" />
     <br/>
     @ViewBag.Message
 }
