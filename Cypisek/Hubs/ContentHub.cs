@@ -81,6 +81,11 @@ namespace Cypisek.Hubs
             return base.OnDisconnected(stopCalled);
         }
 
+        public static string GetClientConnection(int clientID)
+        {
+            return _connections.GetUserConnection(clientID);
+        }
+
         protected override void Dispose(bool disposing)
         {
             // Dipose the hub lifetime scope when the hub is disposed.

@@ -1,0 +1,29 @@
+﻿@model List<Cypisek.ViewModels.EndPlayerClientViewModel>
+@{
+    ViewBag.Title = "Test";
+}
+
+<h2>Test</h2>
+
+<h4>@ViewBag.Error</h4>
+
+@using (Html.BeginForm())
+{
+
+    @*<input type="number" name="id" min="1" />*@
+
+    foreach (var item in Model)
+    {
+        @Html.RadioButton("id", item.ID)  @item.ID
+        <br />
+    }
+    <br />
+    <input type="text" name="message" />
+
+    <div class="form-group">
+        <div class="col-md-10">
+            <input type="submit" value="Wyslij" class="btn btn-default" />
+        </div>
+    </div>
+
+}

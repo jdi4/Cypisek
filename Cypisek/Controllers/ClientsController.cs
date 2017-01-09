@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Cypisek.Hubs;
 using Cypisek.Models;
 using Cypisek.Services;
 using Cypisek.ViewModels;
 using Cypisek.ViewModels.Clients;
+using Microsoft.AspNet.SignalR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -121,7 +123,25 @@ namespace Cypisek.Controllers
                             if (toEdit != null)
                             {
                                 toEdit.ClientScheduleID = formModel.ClientsSchedulesSL;
+                                toEdit.IsSynchronized = false;
                                 endPlayerClientService.EditEndPlayerClient(toEdit);
+
+                                if (formModel.ClientsSchedulesSL != null)
+                                {
+                                    var context = GlobalHost.ConnectionManager.GetHubContext<ContentHub>();
+                                    string connID = ContentHub.GetClientConnection(toEdit.ID);
+                                    string message = clientScheduleService.GetScheduleAsString((int)formModel.ClientsSchedulesSL);
+
+                                    if (connID != null)
+                                    {
+                                        context.Clients.Client(connID).test1(message);
+                                    }
+
+                                    else
+                                    {
+                                        TempData["message"] = "Brak podlaczonego klienta";
+                                    }
+                                }
                             }
                         }
                     }
@@ -134,6 +154,39 @@ namespace Cypisek.Controllers
             {
                 return View();
             }
+        }
+
+        public ActionResult Test()
+        {
+            var clients = endPlayerClientService.GetEndPlayerClients();
+
+            IEnumerable<EndPlayerClientViewModel> model =
+                Mapper.Map<IEnumerable<EndPlayerClient>, IEnumerable<EndPlayerClientViewModel>>(clients);
+            if (TempData["message"] != null)
+                ViewBag.Error = TempData["message"].ToString();
+            return View(model);
+        }
+
+        [HttpPost]
+        public ActionResult Test(int? id, string message)
+        {
+            if (ModelState.IsValid)
+            {
+                if (id != null)
+                {
+                    var context = GlobalHost.ConnectionManager.GetHubContext<ContentHub>();
+                    string connID = ContentHub.GetClientConnection((int)id);
+                    if (connID != null)
+                        context.Clients.Client(connID).test1(message);
+                    else
+                    {
+                        TempData["message"] = "Brak podlaczonego klienta";
+                    }
+
+                }
+
+            }
+            return RedirectToAction("Test");
         }
 
         // GET: Clients/Details/5

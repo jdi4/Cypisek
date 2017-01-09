@@ -66,17 +66,16 @@ namespace Cypisek.Controllers
                     ClientSchedule newSchedule = 
                         Mapper.Map<ClientScheduleFormViewModel, ClientSchedule>(formSchedule);
 
-                    List<int> filesIdsList = new List<int>();
-
-                    foreach (MediaFileSelectViewModel mfsvm in formSchedule.MediaFileList)
-                    {
-                        if (mfsvm.IsSelected)
+                    var playlist = formSchedule.MediaFileList.Where(f => f.IsSelected == true)
+                        .Select(f => new ClientScheduleMediaFilesList
                         {
-                            filesIdsList.Add(mfsvm.ID);
-                        }
-                    }
+                            MediaFileID = f.ID,
+                            PlayTime = f.PlayTime
+                        })
+                        .ToList();
 
-                    clientScheduleService.CreateClientSchedule(newSchedule, filesIdsList);
+                    newSchedule.MediaPlaylist = playlist;
+                    clientScheduleService.CreateClientSchedule(newSchedule);
                     clientScheduleService.SaveClientSchedule();
 
                 }

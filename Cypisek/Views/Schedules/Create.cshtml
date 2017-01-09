@@ -54,6 +54,9 @@
                 <th>
                     @Html.DisplayNameFor(model => model.MediaFileList.First().FileSize)
                 </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.MediaFileList.First().PlayTime)
+                </th>
             </tr>
             @for (int i = 0 ; i < Model.MediaFileList.Count; i++)
             {
@@ -69,6 +72,11 @@
                     <td>
                         @Html.DisplayFor(x => x.MediaFileList[i].FileSize)
                         @Html.HiddenFor(x => x.MediaFileList[i].FileSize)
+                    </td>
+                    <td>
+                        @*@Html.TextBoxFor(x => x.MediaFileList[i].PlayTime)*@
+                        @Html.EditorFor(x => x.MediaFileList[i].PlayTime)
+                        @Html.ValidationMessageFor(x => x.MediaFileList[i].PlayTime, "", new { @class = "text-danger" })
                     </td>
                 </tr>
             }

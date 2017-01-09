@@ -52,6 +52,11 @@ namespace Cypisek.Hubs
         //    return Enumerable.Empty<string>();
         //}
 
+        public string GetUserConnection(T key)
+        {
+            return _connections.FirstOrDefault(x => x.Value.Equals(key)).Key;
+        }
+
         public void Remove(string connectionIdKey)
         {
             lock (_connections)
