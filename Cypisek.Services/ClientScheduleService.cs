@@ -49,7 +49,7 @@ namespace Cypisek.Services
 
         public void CreateClientSchedule(ClientSchedule ClientSchedule)
         {
-            //ClientSchedulesRepository.Add(ClientSchedule);
+            clientSchedulesRepository.Add(ClientSchedule);
         }
 
         public void SaveClientSchedule()
