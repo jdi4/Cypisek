@@ -4,7 +4,8 @@ import os
 import time
 
 import threading
-
+from requests import Session
+from signalr import Connection
 
 class watek(threading.Thread):
     def __init__(self,threadName):
@@ -14,25 +15,40 @@ class watek(threading.Thread):
         #globaly obcject to keep schedule informtion
         
     def run(self):
-        print self.threadName+"run..."
+        def receiveData(data="NULL"):
+            
+            print "---HARM change! Receive data: "+str(data)
+           # Publisher.sendMessage("Schedule change ", picPaths)
+           # getSchedule(harmString):
+           # self.harmString=data
+        def test1(data="NULL"):
+            print "---------------Jordan mowi "+str(data) 
+            #self.harmString=data        
+        with Session() as session:
+           connection = Connection("http://cypisek.azurewebsites.net/signalr", session)
+           chat = connection.register_hub('contentHub') #ContentHub
+           #start a connection
+           connection.start()    
+
+
+        #Autentykacja koncowki
+        print "Autentykacja jako ID 2"
+        chat.client.on('receiveData', receiveData)
+        chat.client.on('test1', test1) 
         
-        i=0
-        while(i<1000):
-            print self.threadName+" mowi ze to "+str(i)+"\n"
-            i=i+1
-            time.sleep(2)
+        chat.server.invoke('PoorAuthenticate','3')
+        time.sleep(2)
+        chat.server.invoke('InvokeSending')
+            
+        with connection:
+              connection.wait(10000)
+              
 
 def main():
     print "Glowny watek init.."
     watek1= watek("Gacek")
-    watek2= watek("Wacek")
     watek1.start()
-    watek2.start()
-    i=0
-    while(i<1000):
-       print "\nmatka mowi ze j to "+str(i)
-       i=i+1
-       time.sleep(1)
+    
         
             
 if __name__ == "__main__":

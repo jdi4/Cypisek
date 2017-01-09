@@ -25,7 +25,7 @@ class ViewClass(wx.Panel):
         self.canPlay=0
        # loadImage()
         Publisher.subscribe(self.PlayImages, ("Play Images"))
-        
+        Publisher.subscribe(self.ScheduleChange, ("Schedule change"))
 
         # layout definition
         self.mainSizer = wx.BoxSizer(wx.VERTICAL)
@@ -38,6 +38,17 @@ class ViewClass(wx.Panel):
         
         self.slideTimer = wx.Timer(None)
         self.slideTimer.Bind(wx.EVT_TIMER, self.update)
+        
+    def ScheduleChange(self,msg):
+        print "----Schedule change!"
+        self.currentPicture = 0
+        self.totalPictures = 0
+        self.picPaths = []
+        self.picTime = []
+        if(self.slideTimer.IsRunning()):
+            self.slideTimer.Stop()
+        #self.PlayImages(msg)
+            
     def PlayImages(self,msg):
         
         #msg to picPath i picTime
@@ -115,71 +126,73 @@ class Bunch:
     def __init__(self,**kwds):
         self.__dict__.update(kwds)
 
-        
 class mainCon(threading.Thread):
     def __init__(self):
-        print "Thread init..."
+        print "SignalR Thread init..."
         threading.Thread.__init__(self)
         #globaly obcject to keep schedule informtion
-        self.harm = Bunch() 
- 
     def run(self):
-        print "Thread run..."
+        
+        #self.harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,800,620_PSACD_l-150x150.jpg,800,Copley-Square-21019-150x150.jpg,800,Groups_GroupSupport_Team-300x300.jpg,800"
+        
+        #Publisher.sendMessage("update images", picPaths)
+        print "SignalR Thread run..."
         def receiveData(data="NULL"):
-            print "Receive data: "+str(data) 
-            #self.harmString=data
+            
+            print "---HARM change! Receive data: "+str(data)
+           # Publisher.sendMessage("Schedule change ", picPaths)
+           # getSchedule(harmString):
+           # self.harmString=data
         def test1(data="NULL"):
-            print "---------------Jordan mowi "+str(data) 
-            #self.harmString=data        
+            print "----HARM RECEIVE: "+str(data)
+            data="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,8000,620_PSACD_l-150x150.jpg,8000,Copley-Square-21019-150x150.jpg,8000,Groups_GroupSupport_Team-300x300.jpg,8000"
+            Publisher.sendMessage("set harm", str(data)) 
+                 
+        with Session() as session:
+           connection = Connection("http://cypisek.azurewebsites.net/signalr", session)
+           chat = connection.register_hub('contentHub') #ContentHub
+           #start a connection
+           connection.start()    
+
+
+        #Autentykacja koncowki
+        print "Autentykacja jako ID 2"
+        chat.client.on('receiveData', receiveData)
+        chat.client.on('test1', test1) 
+        
+        chat.server.invoke('PoorAuthenticate','1')
+        time.sleep(1)
+        chat.server.invoke('InvokeSending')
+
+        with connection:
+            connection.wait(1000)    
+class main():
+    def __init__(self):
+        Publisher.subscribe(self.setHarm, ("set harm"))
+        #globaly obcject to keep schedule informtion
+        self.harm = Bunch() 
+        self.harmString=""
         if(self.internetCheck()):
                     
-             
-             #harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,8,chalets_2.jpg,400,chalets_3.jpg,800,chalets_4.jpg,700,chalets_big.jpg,999,zoom1.jpg,854,zoom2.jpg,924,zoom3.jpg,808,zoom4.jpg,980"   
-             self.harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,800,620_PSACD_l-150x150.jpg,800,Copley-Square-21019-150x150.jpg,800,Groups_GroupSupport_Team-300x300.jpg,800"
-             #harmString="TestowyHarm,3,obraz1.jpg,10,obraz2.jpg,10,obraz3.jpg,10" 
-             #url= "https://pbs.twimg.com/profile_images/580157476512739328/N2VXzbVN.jpg"
-             #url2="https://thumbs.dreamstime.com/z/pretty-girl-cup-hot-tea-winter-forest-43545393.jpg"
-             #self.getImage("chalets_2")
-             
-             #Publisher.sendMessage("update images", picPaths)
-              
-             with Session() as session:
-                 connection = Connection("http://cypisek.azurewebsites.net/signalr", session)
-                 chat = connection.register_hub('contentHub') #ContentHub
-                 #start a connection
-                 connection.start()    
-                 
-             
-           # print test;
-             #chat.client.
-             #chat.client.on('setHarm', setHarm)
-                        #chat.client.on('setImage', setImage)  
-             #wysylanie ID koncowki
-             
-             #Autentykacja koncowki
-             print "Autentykacja jako ID 2"
-             
-             chat.server.invoke('PoorAuthenticate','2')
-             
-             chat.client.on('receiveData', receiveData)
-             chat.client.on('test1', test1) 
-  
-             chat.server.invoke('InvokeSending')
+             #self.harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,8000,620_PSACD_l-150x150.jpg,8000,Copley-Square-21019-150x150.jpg,8000,Groups_GroupSupport_Team-300x300.jpg,8000"
              #with connection:
              #  connection.wait(100)
-              
-             self.getSchedule(self.harmString)
-             self.writeXML()
-             self.playSchedule()
+             print "Oczekiwanie na harmonogram..."
+             #self.setHarm()
+             
+             
              
         else:
              self.readXML()
              #playschedule bez pobierania
              self.playSchedule(1)  
-
     
-    def setHarm(self):
-        self.harm()       
+        
+    def setHarm(self,msg):
+        self.harmString=msg
+        self.getSchedule(self.harmString)
+        self.writeXML()
+        self.playSchedule()       
     def writeXML(self):
         a=ET.Element('config')
         b1=ET.SubElement(a,"ID").text=self.harm.ID
@@ -245,7 +258,7 @@ class mainCon(threading.Thread):
              if(nowTime>=playStart) and (nowTime<=playEnd):
                 isHarm=0
                 print "Harmonogram start..."
-                
+                Publisher.sendMessage("Schedule change ", msg)
                 Publisher.sendMessage("Play Images", msg)
              else:
                 print "Oczekiwanie na wlaczenie harmonogramu..."  
@@ -305,5 +318,6 @@ if __name__ == "__main__":
     
     app = wx.App()
     frame = ViewerFrame()
+    main()
     app.MainLoop()
         
