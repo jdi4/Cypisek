@@ -12,6 +12,10 @@ from wx.lib.pubsub import pub as Publisher
 import xml.etree.ElementTree as ET
 import threading
 
+#global varaible
+G_newHarm = 1 
+G_harmString=""
+lock = threading.Lock()
 class ViewClass(wx.Panel):
     def __init__(self, parent):
          
@@ -50,7 +54,7 @@ class ViewClass(wx.Panel):
         #self.PlayImages(msg)
             
     def PlayImages(self,msg):
-        
+        print "--PlayImages!"
         #msg to picPath i picTime
         self.picPaths=msg.data[0]
         self.picTime=msg.data[1]
@@ -95,7 +99,7 @@ class ViewClass(wx.Panel):
         self.slideTimer.Start(time)
             
     def update(self, event):
-        
+        Publisher.sendMessage("check news", "a")
         self.NextPic()
         self.setScheduleTimer(int(self.picTime[self.currentPicture]))
         
@@ -135,7 +139,6 @@ class mainCon(threading.Thread):
         
         #self.harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,800,620_PSACD_l-150x150.jpg,800,Copley-Square-21019-150x150.jpg,800,Groups_GroupSupport_Team-300x300.jpg,800"
         
-        #Publisher.sendMessage("update images", picPaths)
         print "SignalR Thread run..."
         def receiveData(data="NULL"):
             
@@ -144,9 +147,17 @@ class mainCon(threading.Thread):
            # getSchedule(harmString):
            # self.harmString=data
         def test1(data="NULL"):
+            global G_harmString
+            global G_newHarm
             print "----HARM RECEIVE: "+str(data)
-            data="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,8000,620_PSACD_l-150x150.jpg,8000,Copley-Square-21019-150x150.jpg,8000,Groups_GroupSupport_Team-300x300.jpg,8000"
-            Publisher.sendMessage("set harm", str(data)) 
+            #data="Harmonogram1,07/01/2017 16:00,11/01/2017 11:46,4,12.jpg,8000,620_PSACD_l-150x150.jpg,8000,Copley-Square-21019-150x150.jpg,8000,Groups_GroupSupport_Team-300x300.jpg,8000"
+            print "zadam set harm..."
+            with lock:
+                
+                G_harmString=data
+                G_newHarm=0
+                print "set Gharm to: "+ str(G_harmString)
+             
                  
         with Session() as session:
            connection = Connection("http://cypisek.azurewebsites.net/signalr", session)
@@ -160,35 +171,55 @@ class mainCon(threading.Thread):
         chat.client.on('receiveData', receiveData)
         chat.client.on('test1', test1) 
         
-        chat.server.invoke('PoorAuthenticate','1')
+        chat.server.invoke('PoorAuthenticate','2')
         time.sleep(1)
         chat.server.invoke('InvokeSending')
-
+        
         with connection:
             connection.wait(1000)    
 class main():
     def __init__(self):
         Publisher.subscribe(self.setHarm, ("set harm"))
+        Publisher.subscribe(self.checkNews, ("check news"))
         #globaly obcject to keep schedule informtion
         self.harm = Bunch() 
         self.harmString=""
+
         if(self.internetCheck()):
-                    
+              
              #self.harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,8000,620_PSACD_l-150x150.jpg,8000,Copley-Square-21019-150x150.jpg,8000,Groups_GroupSupport_Team-300x300.jpg,8000"
              #with connection:
              #  connection.wait(100)
-             print "Oczekiwanie na harmonogram..."
-             #self.setHarm()
              
-             
+             while (1):
+                 
+                 print "Oczekiwanie na harmonogram..."
+                 time.sleep(1)
+                 if(self.checkNews()):
+                     print "wypadam!"
+                     break
+                 
              
         else:
              self.readXML()
              #playschedule bez pobierania
              self.playSchedule(1)  
     
-        
+    def checkNews(self,msg=""):
+        print "Check news!"
+        global G_newHarm
+        global G_harmString
+        if(int(G_newHarm)==0):
+           print "receive G_harmString!:"+str(G_harmString)
+           self.setHarm(G_harmString)
+           with lock:
+              G_newHarm=1
+           
+           return 1   
+        else:
+            return 0    
     def setHarm(self,msg):
+        print "SetHarm: Ustawiam harm..."
         self.harmString=msg
         self.getSchedule(self.harmString)
         self.writeXML()
@@ -258,7 +289,7 @@ class main():
              if(nowTime>=playStart) and (nowTime<=playEnd):
                 isHarm=0
                 print "Harmonogram start..."
-                Publisher.sendMessage("Schedule change ", msg)
+                Publisher.sendMessage("Schedule change", msg)
                 Publisher.sendMessage("Play Images", msg)
              else:
                 print "Oczekiwanie na wlaczenie harmonogramu..."  
@@ -270,8 +301,9 @@ class main():
                 #self.waitToStart(msg,playStart,playEnd)            
     
     def getImage(self,file_name):
-        #pic_path="http://cypisek.azurewebsites.net/storage/images/"+str(file_name)
-        pic_path="https://oa.org/files/jpg/"
+        pic_path="http://cypisek.azurewebsites.net/mediastorage/"
+        
+        #pic_path="https://oa.org/files/jpg/"
         url=pic_path+str(file_name)
         print( 'Pobrano zdjecie:', file_name)
        # file_name= file_name+'.jpg'
@@ -313,11 +345,12 @@ class main():
         self.harm=Bunch(schedule_name=words[0],startTime=startTime,endTime=endTime,ID=self.setID(),files=lista1,timers=lista2) 
         
 glowna= mainCon()
-glowna.start()        
+glowna.start() 
+      
 if __name__ == "__main__":
     
     app = wx.App()
     frame = ViewerFrame()
-    main()
+    main=main() 
     app.MainLoop()
         
