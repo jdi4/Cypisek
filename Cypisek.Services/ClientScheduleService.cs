@@ -75,12 +75,13 @@ namespace Cypisek.Services
         public string GetScheduleAsString(int scheduleID)
         {
             var schedule = clientSchedulesRepository.GetById(scheduleID);
-            string dateformat = @"MM\/dd\/yyyy HH:mm";
+            string dateformat = @"dd\/MM\/yyyy HH:mm";
 
-            string scheduleString = String.Format("{0},{1},{2}",
+            string scheduleString = String.Format("{0},{1},{2},{3}",
                 schedule.Name,
                 schedule.StartDate.ToString(dateformat),
-                schedule.ExpirationDate.ToString(dateformat)
+                schedule.ExpirationDate.ToString(dateformat),
+                schedule.MediaPlaylist.Count
                 );
 
             var playlist = clientScheduleMediaFilesListRepository
@@ -90,7 +91,7 @@ namespace Cypisek.Services
 
             foreach (var item in playlist)
             {
-                sb.AppendFormat(",{0},{1}",item.PlayTime, item.MediaFile.Name);
+                sb.AppendFormat(",{0},{1}", item.MediaFile.Name, item.PlayTime);
             }
 
             return sb.ToString();
