@@ -1,0 +1,43 @@
+﻿@model IEnumerable<Cypisek.ViewModels.EndPlayerClientViewModel>
+
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsConnected)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.LastConnectionDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ClientSchedule.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.IsSynchronized)
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsConnected)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.LastConnectionDate)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.ClientSchedule.Name)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.IsSynchronized)
+        </td>
+    </tr>
+}
+
+</table>

@@ -23,7 +23,6 @@ namespace Cypisek.Controllers
         {
             var files = Directory.EnumerateFiles(Server.MapPath(imagesStorageDirLocation));
             return View(files);
-            return View();
         }
 
         [HttpPost]
