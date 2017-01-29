@@ -62,7 +62,7 @@
     <div class="form-horizontal">
         @Html.DropDownListFor(Model => Model.ClientsGroupsSL, Model.ClientsGroupsSL, "--Brak grupy--")
         <input type="submit" value="Ustaw grupę" class="btn btn-default" formaction="@Url.Action("SetGroup")" />
-        @Html.DropDownListFor(Model => Model.ClientsSchedulesSL, Model.ClientsSchedulesSL, "--Brak harmonogramu--")
-        <input type="submit" value="Ustaw harmonogram" class="btn btn-default" formaction="@Url.Action("SetSchedule")" />
+        @Html.DropDownListFor(Model => Model.ClientsCampaignsSL, Model.ClientsCampaignsSL, "--Brak kampanii--")
+        <input type="submit" value="Ustaw kampanię" class="btn btn-default" formaction="@Url.Action("SetCampaign")" />
     </div>
 }
