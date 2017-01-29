@@ -248,7 +248,6 @@
     <Compile Include="ViewModels\Clients\ClientManagerFormModel.cs" />
     <Compile Include="ViewModels\EndPlayerClientViewModel.cs" />
     <Compile Include="ViewModels\MediaLibrary\MediaFileViewModel.cs" />
-    <Compile Include="ViewModels\Schedules\ClientScheduleCreateViewModel.cs" />
     <Compile Include="ViewModels\Schedules\ClientScheduleFormViewModel.cs" />
     <Compile Include="ViewModels\Schedules\ClientScheduleViewModel.cs" />
     <Compile Include="ViewModels\Schedules\MediaFileSelectViewModel.cs" />
@@ -296,11 +295,8 @@
     <Content Include="Views\Admin\HelloAdmin.cshtml" />
     <Content Include="Views\MediaLibrary\FileBrowser.cshtml" />
     <Content Include="Views\Clients\Index.cshtml" />
-    <Content Include="Views\Shared\_EndPlayerClientsTable.cshtml" />
     <Content Include="Views\Schedules\Index.cshtml" />
     <Content Include="Views\Schedules\Create.cshtml" />
-    <Content Include="Views\Shared\_EndPlayerClientsTableHeader.cshtml" />
-    <Content Include="Views\Shared\_EndPlayerClientsTableRow.cshtml" />
     <Content Include="Views\Shared\_EndPlayerClientsSelectTable.cshtml" />
     <Content Include="Views\Clients\CreateGroup.cshtml" />
     <Content Include="Views\Clients\DeleteGroup.cshtml" />
