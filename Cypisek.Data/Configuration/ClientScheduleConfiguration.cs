@@ -16,7 +16,7 @@ namespace Cypisek.Data.Configuration
             Property(g => g.Name).IsRequired();
             Property(g => g.StartDate).IsRequired();
             Property(g => g.ExpirationDate).IsRequired();
-
+            Property(g => g.CampaignID).IsRequired();
         }
     }
 }

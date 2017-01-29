@@ -8,15 +8,14 @@ using System.Threading.Tasks;
 
 namespace Cypisek.Data.Configuration
 {
-    public class EndPlayerClientConfiguration : EntityTypeConfiguration<EndPlayerClient>
+    public class CampaignConfiguration : EntityTypeConfiguration<Campaign>
     {
-        public EndPlayerClientConfiguration()
+        public CampaignConfiguration()
         {
-            ToTable("EndPlayerClient");
+            ToTable("CampaignConfiguration");
             Property(g => g.ID).IsRequired();
             Property(g => g.Name).IsRequired();
-            Property(g => g.CampaignID).IsOptional();
-            Property(g => g.ClientGroupID).IsOptional();
         }
+
     }
 }

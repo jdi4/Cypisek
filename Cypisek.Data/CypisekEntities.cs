@@ -14,6 +14,7 @@ namespace Cypisek.Data
         public CypisekEntities() : base("CypisekEntities") { }
 
         public DbSet<ClientGroup> ClientGroups { get; set; }
+        public DbSet<Campaign> Campaign { get; set; }
         public DbSet<ClientSchedule> ClientSchedule { get; set; }
         public DbSet<ClientScheduleMediaFilesList> ClientScheduleMediaFilesLists { get; set; }
         public DbSet<EndPlayerClient> EndPlayerClients { get; set; }
@@ -27,6 +28,7 @@ namespace Cypisek.Data
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
             modelBuilder.Configurations.Add(new ClientGroupConfiguration());
+            modelBuilder.Configurations.Add(new CampaignConfiguration());
             modelBuilder.Configurations.Add(new ClientScheduleConfiguration());
             modelBuilder.Configurations.Add(new ClientScheduleMediaFilesListConfiguration());
             modelBuilder.Configurations.Add(new EndPlayerClientConfiguration());

@@ -122,7 +122,7 @@ namespace Cypisek.Controllers
                             var toEdit = endPlayerClientService.GetEndPlayerClient(client.ID);
                             if (toEdit != null)
                             {
-                                toEdit.ClientScheduleID = formModel.ClientsSchedulesSL;
+                                toEdit.CampaignID = formModel.ClientsSchedulesSL;
                                 toEdit.IsSynchronized = false;
                                 endPlayerClientService.EditEndPlayerClient(toEdit);
 

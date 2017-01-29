@@ -15,7 +15,7 @@ namespace Cypisek.Data
             //seed if needed
             PopulateClientGroups().ForEach(cg => context.ClientGroups.Add(cg));
             PopulateEndPlayerClients().ForEach(c => context.EndPlayerClients.Add(c));
-            PopulateSchedulesandPlaylists().ForEach(c => context.ClientScheduleMediaFilesLists.Add(c));
+            PopulateCampaignsandPlaylists().ForEach(c => context.ClientScheduleMediaFilesLists.Add(c));
 
             context.Commit();
         }
@@ -80,15 +80,13 @@ namespace Cypisek.Data
             };
         }
 
-        private static List<ClientScheduleMediaFilesList> PopulateSchedulesandPlaylists()
+        private static List<ClientScheduleMediaFilesList> PopulateCampaignsandPlaylists()
         {
-            var schedule1 = new ClientSchedule()
+            var campaign1 = new Campaign()
             {
-                Name = "Harmonogram test1",
-                StartDate = DateTime.Now,
-                ExpirationDate = DateTime.Now.AddMonths(2),
+                Name = "Kampania testowa 1",
                 EndPlayerClients = new List<EndPlayerClient>
-                { 
+                {
                             new EndPlayerClient()
                             {
                                 Name = "Końcówka H1",
@@ -104,13 +102,23 @@ namespace Cypisek.Data
                                 IsConnected = false
                             }
                 }
+            };
+
+
+            var schedule1 = new ClientSchedule()
+            {
+                Name = "Harmonogram test1",
+                StartDate = DateTime.Now,
+                ExpirationDate = DateTime.Now.AddMonths(2),
+                Campaign = campaign1
              };
 
             var schedule2 = new ClientSchedule()
             {
                 Name = "Harmonogram test2",
                 StartDate = DateTime.Now.AddDays(1),
-                ExpirationDate = DateTime.Now.AddMonths(5)
+                ExpirationDate = DateTime.Now.AddMonths(5),
+                Campaign = campaign1
             };
 
             return new List<ClientScheduleMediaFilesList>
