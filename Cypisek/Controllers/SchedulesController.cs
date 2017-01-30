@@ -33,6 +33,14 @@ namespace Cypisek.Controllers
             return View(model);
         }
 
+        public ActionResult CampaignCalendar(int id)
+        {
+            var schedules = campaignService.GetCampaign(id).Schedules;
+            var model = Mapper.Map<IEnumerable<ClientSchedule>, IEnumerable<ClientScheduleViewModel>>(schedules);
+
+            return View(model);
+        }
+
         // GET: Schedules/Details/5
         public ActionResult Details(int id)
         {

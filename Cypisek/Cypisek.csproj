@@ -420,6 +420,7 @@
     <Content Include="Views\Clients\Test.cshtml" />
     <Content Include="Views\Shared\_ClientSchedulesTable.cshtml" />
     <Content Include="Views\Schedules\CreateCampaign.cshtml" />
+    <Content Include="Views\Schedules\CampaignCalendar.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
