@@ -184,6 +184,7 @@ class main():
         #globaly obcject to keep schedule informtion
         self.harm = Bunch() 
         self.harmString=""
+        self.filelist=""
 
         if(self.internetCheck()):
               
@@ -272,11 +273,13 @@ class main():
          nowTime=time.strptime(nowTime,"%d/%m/%Y %H:%M")
          print(nowTime)
          print(playStart)  
-         print(playEnd)   
+         print(playEnd) 
+         self.delImages(self.harm.files)  
          for index in range(0,count):
              picPath.append(self.harm.files[index])
              picTime.append(self.harm.timers[index])
              if (offline==0):
+                 
                 self.getImage(self.harm.files[index])
              
          msg=[picPath, picTime]
@@ -299,7 +302,22 @@ class main():
                 print ""
                 time.sleep(5)  
                 #self.waitToStart(msg,playStart,playEnd)            
-    
+    def delImages(self,newFileList):
+        
+        count=len(newFileList)
+        dirfiles=glob.glob('*.jpg')
+        dirfiles.extend(glob.glob('*.avi'))
+        dirfiles.extend(glob.glob('*.mp4'))
+        
+        for file in dirfiles:
+            self.filelist=self.filelist+str(file)+","
+            if (file not in newFileList):
+                print "Usuwam plik "+str(file)
+                os.remove(file)
+                
+
+            
+        
     def getImage(self,file_name):
         pic_path="http://cypisek.azurewebsites.net/mediastorage/"
         
@@ -310,6 +328,7 @@ class main():
         with open(file_name,'wb') as f:
             f.write(urllib2.urlopen(url).read())
             f.close()
+            
         
           
         print "zaladowano "+str(file_name)
