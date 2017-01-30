@@ -13,12 +13,13 @@ namespace Cypisek.Controllers
 {
     public class SchedulesController : Controller
     {
-        //Cypisek.Services.
+        private readonly ICampaignService campaignService;
         private readonly IClientScheduleService clientScheduleService;
         private readonly IMediaFileService mediaFileService;
 
-        public SchedulesController(IClientScheduleService csS, IMediaFileService mfS)
+        public SchedulesController(IClientScheduleService csS, IMediaFileService mfS, ICampaignService cS)
         {
+            this.campaignService = cS;
             this.clientScheduleService = csS;
             this.mediaFileService = mfS;
         }

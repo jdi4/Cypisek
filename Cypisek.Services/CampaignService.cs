@@ -12,6 +12,7 @@ namespace Cypisek.Services
     public interface ICampaignService
     {
         IEnumerable<Campaign> GetAllCampaigns();
+        IEnumerable<Campaign> GetAllCampaignsIncludeSchedules();
         Campaign GetCampaign(int id);
         //Campaign GetCampaignIncludeSchedules(int id);
         void CreateCampaign(Campaign Campaign);
@@ -55,6 +56,11 @@ namespace Cypisek.Services
         public void CommitChanges()
         {
             unitOfWork.Commit();
+        }
+
+        public IEnumerable<Campaign> GetAllCampaignsIncludeSchedules()
+        {
+            return CampaignsRepository.GetAllIncludeSchedules();
         }
 
         //public int? GetCurrentScheduleID(int campaignId)
