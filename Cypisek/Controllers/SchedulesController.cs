@@ -27,8 +27,8 @@ namespace Cypisek.Controllers
         // GET: Schedules
         public ActionResult Index()
         {
-            var schedules = clientScheduleService.GetClientSchedules();
-            var model = Mapper.Map<IEnumerable<ClientSchedule>, IEnumerable<ClientScheduleViewModel>>(schedules);
+            var campaigns = campaignService.GetAllCampaignsIncludeSchedules();
+            var model = Mapper.Map<IEnumerable<Campaign>, IEnumerable<CampaignsIndexViewModel>>(campaigns);
 
             return View(model);
         }
@@ -92,6 +92,39 @@ namespace Cypisek.Controllers
             {
                 ViewBag["error"] = ex.Message;
                 return View(formSchedule);
+            }
+        }
+
+        public ActionResult CreateCampaign()
+        { 
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult CreateCampaign(CampaignFormViewModel formCampaign)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    Campaign newCampaign =
+                        Mapper.Map<CampaignFormViewModel, Campaign>(formCampaign);
+
+                    campaignService.CreateCampaign(newCampaign);
+                    campaignService.CommitChanges();
+
+                }
+                else
+                {
+                    return View(formCampaign);
+                }
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                ViewBag["error"] = ex.Message;
+                return View(formCampaign);
             }
         }
 

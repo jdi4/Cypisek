@@ -19,6 +19,8 @@ namespace Cypisek.Mappings
             CreateMap<ClientScheduleFormViewModel, ClientSchedule>();
             //.ForMember(dest => dest.MediaFilessList;
 
+            CreateMap<CampaignFormViewModel, Campaign>();
+
             CreateMap<ClientGroupFormModel, ClientGroup>();
         }
 

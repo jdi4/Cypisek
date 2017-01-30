@@ -25,6 +25,8 @@ namespace Cypisek.Mappings
 
             CreateMap<ClientSchedule, ClientScheduleViewModel>();
 
+            CreateMap<Campaign, CampaignsIndexViewModel>();
+
             CreateMap<MediaFile, MediaFileViewModel>()
                 .ForMember(vm => vm.FileName, map => map.MapFrom(m => m.Name))
                 .ForMember(vm => vm.Bytes, map => map.MapFrom(m => m.Size));
