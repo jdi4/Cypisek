@@ -185,6 +185,7 @@ class main():
         self.harm = Bunch() 
         self.harmString=""
         self.filelist=""
+        self.dirfiles=""
 
         if(self.internetCheck()):
               
@@ -305,11 +306,11 @@ class main():
     def delImages(self,newFileList):
         
         count=len(newFileList)
-        dirfiles=glob.glob('*.jpg')
-        dirfiles.extend(glob.glob('*.avi'))
-        dirfiles.extend(glob.glob('*.mp4'))
+        self.dirfiles=glob.glob('*.jpg')
+        self.dirfiles.extend(glob.glob('*.avi'))
+        self.dirfiles.extend(glob.glob('*.mp4'))
         
-        for file in dirfiles:
+        for file in self.dirfiles:
             self.filelist=self.filelist+str(file)+","
             if (file not in newFileList):
                 print "Usuwam plik "+str(file)
@@ -322,15 +323,16 @@ class main():
         pic_path="http://cypisek.azurewebsites.net/mediastorage/"
         
         #pic_path="https://oa.org/files/jpg/"
-        url=pic_path+str(file_name)
-        print( 'Pobrano zdjecie:', file_name)
-       # file_name= file_name+'.jpg'
-        with open(file_name,'wb') as f:
-            f.write(urllib2.urlopen(url).read())
-            f.close()
-            
+        if (file_name not in self.dirfiles):
+            url=pic_path+str(file_name)
+            print( 'Pobrano zdjecie:', file_name)
+           # file_name= file_name+'.jpg'
+            with open(file_name,'wb') as f:
+                f.write(urllib2.urlopen(url).read())
+                f.close()
+        else:   
+            print "Plik "+str(file_name)+" juz istnieje"
         
-          
         print "zaladowano "+str(file_name)
         
     def setID(self):
