@@ -161,19 +161,32 @@ namespace Cypisek.Controllers
             }
         }
 
-        // GET: Schedules/Delete/5
-        public ActionResult Delete(int id)
+        // GET: Schedules/DeleteSchedule/5
+        public ActionResult DeleteSchedule(int id)
         {
-            return View();
+            var schedule = clientScheduleService.GetClientSchedule(id);
+
+            if (schedule != null)
+            {
+                var model = Mapper.Map<ClientSchedule, ClientScheduleViewModel>(schedule);
+                var playlist = clientScheduleService.GetSchedulePlaylist(id);
+                model.MediaPlaylist = (List<MediaFileSelectViewModel>)
+                        Mapper.Map<IEnumerable<ClientScheduleMediaFilesList>, IEnumerable<MediaFileSelectViewModel>>(playlist);
+                return View(model);
+            }
+            else
+                return RedirectToAction("Index");
+
         }
 
-        // POST: Schedules/Delete/5
+        // POST: Schedules/DeleteSchedule/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult DeleteSchedule(int id, FormCollection collection)
         {
             try
             {
-                // TODO: Add delete logic here
+                clientScheduleService.DeleteClientSchedule(id);
+                clientScheduleService.SaveClientSchedule();
 
                 return RedirectToAction("Index");
             }

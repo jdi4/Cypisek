@@ -34,7 +34,7 @@
                 @Html.DisplayFor(modelItem => item.PlaylistCount)
             </td>
             <td>
-                @Html.ActionLink("Usuń", "DeleteSchedule", "Schedules", new { id = item.ID })
+                @Html.ActionLink("Usuń", "DeleteSchedule", "Schedules", new { id = item.ID }, new { })
             </td>
         </tr>
     }

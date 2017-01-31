@@ -14,6 +14,11 @@ namespace Cypisek.ViewModels.Schedules
         [DisplayName("Nazwa")]
         public string Name { get; set; }
 
+        public int CampaignID { get; set; }
+
+        [DisplayName("Kampania")]
+        public string CampaignName { get; set; }
+
         [DisplayName("Data rozpoczęcia")]
         public DateTime StartDate { get; set; }
 
@@ -23,16 +28,14 @@ namespace Cypisek.ViewModels.Schedules
         [DisplayName("Liczba plików")]
         public int PlaylistCount
         {
-            get { return MediaPlaylist.Count; }
+            get
+            {
+                if (MediaPlaylist != null)
+                    return MediaPlaylist.Count;
+                else return 0;
+            }
         }
 
-        [DisplayName("Liczba końcówek")]
-        public int ClientsCount
-        {
-            get { return EndPlayerClients.Count; }
-        }
-
-        public virtual ICollection<ClientScheduleMediaFilesList> MediaPlaylist { get; set; }
-        public virtual ICollection<EndPlayerClient> EndPlayerClients { get; set; }
+        public virtual ICollection<MediaFileSelectViewModel> MediaPlaylist { get; set; }
     }
 }

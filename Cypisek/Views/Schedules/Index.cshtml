@@ -9,8 +9,8 @@
 @Html.ActionLink("Dodaj kampanię", "CreateCampaign")
 
 
-<table class="table-bordered">
-    <tr>
+
+    @*<tr>
         <th>
             @Html.DisplayNameFor(model => model.Name)
         </th>
@@ -18,26 +18,28 @@
             @Html.DisplayNameFor(model => model.ClientsCount)
         </th>
         <th></th>
-    </tr>
+    </tr>*@
 
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayNameFor(model => model.ClientsCount):
-                @Html.DisplayFor(modelItem => item.ClientsCount)
-            </td>
-            <td>
-                @Html.ActionLink("Dodaj harmonogram", "Create", new { cId = item.ID, cName = item.Name }) |
-                @Html.ActionLink("Kalendarz", "cal", new { id = item.ID }) |
-                @Html.ActionLink("Usuń", "DeleteCampaign", new { id = item.ID })
-            </td>
-        </tr>
+        <table class="table-hover">
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(model => model.ClientsCount):
+                    @Html.DisplayFor(modelItem => item.ClientsCount)
+                </td>
+                <td>
+                    @Html.ActionLink("Dodaj harmonogram", "Create", new { cId = item.ID, cName = item.Name }) |
+                    @Html.ActionLink("Kalendarz", "cal", new { id = item.ID }) |
+                    @Html.ActionLink("Usuń", "DeleteCampaign", new { id = item.ID })
+                </td>
+            </tr>
 
-        @Html.Partial("_ClientSchedulesTable", item.Schedules)
+            @Html.Partial("_ClientSchedulesTable", item.Schedules)
+
+        </table>
     }
-</table>
 
