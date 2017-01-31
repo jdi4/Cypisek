@@ -1,5 +1,5 @@
 import glob
-import os
+import os,os.path, sys
 import wx
 import urllib2
 import random
@@ -11,6 +11,7 @@ from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
 import xml.etree.ElementTree as ET
 import threading
+import MplayerCtrl as mpc
 
 #global varaible
 G_newHarm = 1 
@@ -27,17 +28,22 @@ class ViewClass(wx.Panel):
         self.picPaths = []
         self.picTime = []
         self.canPlay=0
+        self.wasVideo=0
        # loadImage()
         Publisher.subscribe(self.PlayImages, ("Play Images"))
         Publisher.subscribe(self.ScheduleChange, ("Schedule change"))
 
         # layout definition
-        self.mainSizer = wx.BoxSizer(wx.VERTICAL)
+        self.Sizer = wx.BoxSizer(wx.VERTICAL)
         img = wx.EmptyImage(self.photoMaxSize,self.photoMaxSize)
+        #denition of Image viewer
         self.imageCtrl = wx.StaticBitmap(self, wx.ID_ANY, 
                                          wx.BitmapFromImage(img))
-        
-        self.mainSizer.Add(self.imageCtrl, 0, wx.ALL|wx.CENTER, 5)
+        #denition of Video viewer   
+        self.mpc = mpc.MplayerCtrl((self), -1, r'C:\Python27\mplayer\mplayer.exe',size=(600, 600),style=wx.SUNKEN_BORDER|wx.TAB_TRAVERSAL) 
+        self.Sizer.Add(self.mpc, 1, wx.ALL|wx.EXPAND, 5)    
+        self.Sizer.Add(self.imageCtrl, 1, wx.ALL|wx.EXPAND, 5)
+        self.Sizer.Show(0,0,0)
         
         
         self.slideTimer = wx.Timer(None)
@@ -60,12 +66,20 @@ class ViewClass(wx.Panel):
         self.picTime=msg.data[1]
         self.currentPicture = 0
         self.totalPictures =len(self.picPaths)
-        self.loadImage(self.picPaths[0])
+        extension = os.path.splitext(self.picPaths[0])[1]
+       
+        if(extension=='.mp4'):
+            self.switch()
+            self.wasVideo=1
+            self.loadVideo(self.picPaths[0])
+        else:
+            self.loadImage(self.picPaths[0])
         self.setScheduleTimer(int(self.picTime[0]))
         
     def loadImage(self, msg):
-        
-        print "wyswietlam: "
+        if(self.wasVideo==1):
+            self.switch()
+        print "wyswietlam zdjecie: "+str(msg)
         image=msg
         image_name = os.path.basename(image)
         img = wx.Image(image, wx.BITMAP_TYPE_ANY)
@@ -83,14 +97,47 @@ class ViewClass(wx.Panel):
         self.imageCtrl.SetBitmap(wx.BitmapFromImage(img))
         #self.imageLabel.SetLabel(image_name)
         self.Refresh()
+        
         Publisher.sendMessage("resize", "")
+    def loadVideo(self,msg):
+        self.mpc = mpc.MplayerCtrl((self), -1, r'C:\Python27\mplayer\mplayer.exe',size=(600, 600),style=wx.SUNKEN_BORDER|wx.TAB_TRAVERSAL) 
+        if(self.wasVideo==0):
+            self.switch()
+            self.Show()
+            print "przelaczam..."
+        print "wyswietlam film: "+str(msg)
+        self.Refresh()
+        self.mpc.Start(msg)
+        self.Refresh() 
+        self.wasVideo=1
+        Publisher.sendMessage("resize", "")  
+    def switch(self):
+        if(self.Sizer.IsShown(0)==1): #videoplayer is shown
+            self.Sizer.Show(0,0,0) #video player is not show
+            self.Sizer.Show(1,1,0) #imageplayer is show
+            self.Refresh()  
+        else:
+            self.Sizer.Show(1,0,0) #imageplaye is not show
+            self.Sizer.Show(0,1,0) #video player is show    
+            self.Refresh()  
     def NextPic(self):
+        self.mpc.Stop()
+        
         if self.currentPicture == self.totalPictures-1:
             self.currentPicture = 0
         else:
             self.currentPicture += 1
-        self.loadImage(self.picPaths[self.currentPicture]) 
+        extension = os.path.splitext(self.picPaths[self.currentPicture])[1]
         
+        if(extension=='.mp4'):
+            
+            self.loadVideo(self.picPaths[self.currentPicture])
+            self.wasVideo=1
+        else:
+                       
+            self.loadImage(self.picPaths[self.currentPicture])      
+            self.wasVideo=0  
+            
     def setScheduleTimer(self, time):
         """
         Starts and stops the slideshow
@@ -115,15 +162,17 @@ class ViewerFrame(wx.Frame):
         Publisher.subscribe(self.resizeFrame, ("resize"))
         
         self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.sizer.Add(panel, 1, wx.EXPAND)
+        self.sizer.Add(panel, wx.EXPAND|wx.FIXED_MINSIZE|wx.ALIGN_CENTER)
         self.SetSizer(self.sizer)
-        
+        self.Update()
         self.Show()
         self.sizer.Fit(self)
         self.Center()
         
      def resizeFrame(self, msg):
-        """"""
+        self.Update()
+        self.Show()
+        self.Center()
         self.sizer.Fit(self)
         
 class Bunch:
@@ -325,7 +374,7 @@ class main():
         #pic_path="https://oa.org/files/jpg/"
         if (file_name not in self.dirfiles):
             url=pic_path+str(file_name)
-            print( 'Pobrano zdjecie:', file_name)
+            print( 'Pobrano :', file_name)
            # file_name= file_name+'.jpg'
             with open(file_name,'wb') as f:
                 f.write(urllib2.urlopen(url).read())
