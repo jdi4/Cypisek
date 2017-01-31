@@ -13,6 +13,7 @@
     <input type="button" id="auth" value="Authenticate" />
     <br />
     <input type="button" id="invoke" value="Invoke server send" />
+    <input type="button" id="check" value="Check for new schedule" />
     <input type="hidden" id="displayname" />
     <ul id="discussion"></ul>
 </div>
@@ -60,10 +61,13 @@
             });
             $('#auth').click(function () {
                 chat.server.poorAuthenticate($('#authid').val());
-            })  
+            });
             $('#invoke').click(function () {
                 chat.server.invokeSending();
-            });            
+            });
+            $('#check').click(function () {
+                chat.server.checkSchedule();
+            });
         });
         // This optional function html-encodes messages for display in the page.
         function htmlEncode(value) {
