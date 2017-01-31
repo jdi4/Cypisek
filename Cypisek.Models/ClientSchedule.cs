@@ -12,10 +12,11 @@ namespace Cypisek.Models
         public DateTime StartDate { get; set; }
         public DateTime ExpirationDate { get; set; }
 
+        public int CampaignID { get; set; }
+
         // Nav. properties
         public virtual ICollection<ClientScheduleMediaFilesList> MediaPlaylist { get; set; }
-
-        public virtual ICollection<EndPlayerClient> EndPlayerClients { get; set; }
+        public Campaign Campaign { get; set; }
 
     }
 }

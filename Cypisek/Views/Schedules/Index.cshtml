@@ -1,56 +1,46 @@
-﻿@model IEnumerable<Cypisek.ViewModels.Schedules.ClientScheduleViewModel>
+﻿@model IEnumerable<Cypisek.ViewModels.Schedules.CampaignsIndexViewModel>
 
 @{
-    ViewBag.Title = "Lista harmonogramów";
+    ViewBag.Title = "Lista kampanii";
 }
 
-<h2>Lista harmonogramów</h2>
+<h2>Lista kampanii</h2>
 
-@Html.ActionLink("Dodaj harmonogram", "Create")
+@Html.ActionLink("Dodaj kampanię", "CreateCampaign")
 
-<table class="table">
-    <tr>
+
+
+    @*<tr>
         <th>
             @Html.DisplayNameFor(model => model.Name)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.StartDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.ExpirationDate)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.PlaylistCount)
         </th>
         <th>
             @Html.DisplayNameFor(model => model.ClientsCount)
         </th>
         <th></th>
-    </tr>
+    </tr>*@
 
     @foreach (var item in Model)
     {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ExpirationDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PlaylistCount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ClientsCount)
-            </td>
-            <td>
-                @*@Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.ID })*@
-            </td>
-        </tr>
+        <table class="table-hover">
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayNameFor(model => model.ClientsCount):
+                    @Html.DisplayFor(modelItem => item.ClientsCount)
+                </td>
+                <td>
+                    @Html.ActionLink("Dodaj harmonogram", "Create", new { cId = item.ID, cName = item.Name }) |
+                    @Html.ActionLink("Edycja", "EditCampaign", new { id = item.ID}) |
+                    @Html.ActionLink("Kalendarz", "cal", new { id = item.ID }) |
+                    @Html.ActionLink("Usuń", "DeleteCampaign", new { id = item.ID })
+                </td>
+            </tr>
+
+            @Html.Partial("_ClientSchedulesTable", item.Schedules)
+
+        </table>
     }
-</table>
 

@@ -1,0 +1,84 @@
+﻿@model Cypisek.ViewModels.Schedules.ClientScheduleViewModel
+
+@{
+    ViewBag.Title = "Usuwanie harmonogramu";
+}
+
+<h2>Usuwanie harmonogramu</h2>
+
+<h3>Potwierdź usunięcie harmonogramu</h3>
+<div>
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.CampaignName)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.CampaignName)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StartDate)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.ExpirationDate)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.ExpirationDate)
+        </dd>
+
+    </dl>
+
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MediaPlaylist.First().FileName)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MediaPlaylist.First().FileSize)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.MediaPlaylist.First().PlayTime)
+            </th>
+        </tr>
+        @foreach (var fm in Model.MediaPlaylist)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(model => fm.FileName)
+                </td>
+                <td>
+                    @Html.DisplayFor(model => fm.FileSize)
+                </td>
+                <td>
+                   @Html.DisplayFor(model => fm.PlayTime)
+                </td>
+            </tr>
+        }
+    </table>
+
+    @using (Html.BeginForm()) {
+        @Html.AntiForgeryToken()
+
+        <div class="form-actions no-color">
+            @Html.HiddenFor(model => model.ID)
+
+            <input type="submit" value="Usuń" class="btn btn-default" /> |
+            @Html.ActionLink("Powrót do listy", "Index")
+        </div>
+    }
+</div>

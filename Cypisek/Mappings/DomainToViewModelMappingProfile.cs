@@ -23,7 +23,16 @@ namespace Cypisek.Mappings
             CreateMap<ClientGroup, ClientGroupViewModel>()
                 .ForMember(dest => dest.EndPlayerClients, opt => opt.MapFrom(src => src.EndPlayerClients));
 
-            CreateMap<ClientSchedule, ClientScheduleViewModel>();
+            CreateMap<ClientSchedule, ClientScheduleViewModel>()
+                .ForMember(vm => vm.MediaPlaylist, map => map.Ignore());
+            //map => map
+            //.MapFrom(m => m.MediaPlaylist.Select( p => p.MediaFile)));
+
+            CreateMap<ClientSchedule, ClientScheduleFormViewModel>();
+
+            CreateMap<Campaign, CampaignsIndexViewModel>();
+
+            CreateMap<Campaign, CampaignSchedulesFormViewModel>();
 
             CreateMap<MediaFile, MediaFileViewModel>()
                 .ForMember(vm => vm.FileName, map => map.MapFrom(m => m.Name))
@@ -33,6 +42,12 @@ namespace Cypisek.Mappings
                 .ForMember(vm => vm.FileName, map => map.MapFrom(m => m.Name))
                 .ForMember(vm => vm.Bytes, map => map.MapFrom(m => m.Size))
                 .ForMember(vm => vm.IsSelected, map => map.UseValue<bool>(false));
+
+            CreateMap<ClientScheduleMediaFilesList, MediaFileSelectViewModel>()
+            .ForMember(vm => vm.ID, map => map.MapFrom(m => m.MediaFile.ID))
+            .ForMember(vm => vm.FileName, map => map.MapFrom(m => m.MediaFile.Name))
+            .ForMember(vm => vm.Bytes, map => map.MapFrom(m => m.MediaFile.Size))
+            .ForMember(vm => vm.IsSelected, map => map.UseValue<bool>(false));
         }
 
         public override string ProfileName

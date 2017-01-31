@@ -13,6 +13,6 @@ namespace Cypisek.ViewModels.Clients
         public ICollection<EndPlayerClientViewModel> ClientsWithoutGroup { get; set; }
 
         public ICollection<SelectListItem> ClientsGroupsSL { get; set; }
-        public ICollection<SelectListItem> ClientsSchedulesSL { get; set; }
+        public ICollection<SelectListItem> ClientsCampaignsSL { get; set; }
     }
 }

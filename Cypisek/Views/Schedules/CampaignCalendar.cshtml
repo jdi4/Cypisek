@@ -1,0 +1,104 @@
+﻿@model IEnumerable<Cypisek.ViewModels.Schedules.ClientScheduleViewModel>
+
+
+@{
+    ViewBag.Title = "CampaignCalendar";
+}
+
+<h2>Kalendarz kampanii</h2>
+
+@section scripts
+{
+    @*<link rel='stylesheet' href='fullcalendar/fullcalendar.css' />
+        <script src='lib/jquery.min.js'></script>
+        <script src='lib/moment.min.js'></script>
+        <script src='fullcalendar/fullcalendar.js'></script>*@
+
+    <link rel='stylesheet' href='@Url.Content("~/Content/fullcalendar.css")' />
+    <script src='@Url.Content("~/Scripts/lib/jquery.min.js")'></script>
+    <script src='@Url.Content("~/Scripts/lib/moment.min.js")'></script>
+    <script src='@Url.Content("~/Scripts/fullcalendar.js")'></script>
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+
+            var schedulesAsEvents = [];
+
+            @foreach (var sch in Model)
+            {
+                <text>
+                schedulesAsEvents.push(
+                    {
+                        title : '@sch.Name',
+                        start : '@sch.StartDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss")',
+                        end : '@sch.ExpirationDate.ToString(@"yyyy\-MM\-dd")',
+                        editable : true
+                    }
+                );
+            </text>
+            }
+
+            $('#calendar').fullCalendar({
+                events: schedulesAsEvents,
+                header: {
+                    left: 'title',
+                    center: 'today',
+                    right: 'month,agendaWeek prev,next'
+                }
+            });
+        });
+    </script>
+}
+
+<h2>Lista harmonogramów</h2>
+
+@Html.ActionLink("Dodaj harmonogram", "Create")
+
+
+<div id='calendar'></div>
+
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ExpirationDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.PlaylistCount)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ClientsCount)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExpirationDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PlaylistCount)
+            </td>
+            <td>
+                @*@Html.DisplayFor(modelItem => item.ClientsCount)*@
+            </td>
+            <td>
+                @*@Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })*@
+            </td>
+        </tr>
+    }
+</table>

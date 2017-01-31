@@ -1,0 +1,88 @@
+﻿@model Cypisek.ViewModels.Schedules.CampaignSchedulesFormViewModel
+
+@{
+    ViewBag.Title = "Edytuj kampanię";
+}
+
+@section scripts
+{
+    <link rel='stylesheet' href='@Url.Content("~/Content/fullcalendar.css")' />
+    <script src='@Url.Content("~/Scripts/lib/jquery.min.js")'></script>
+    <script src='@Url.Content("~/Scripts/lib/moment.min.js")'></script>
+    <script src='@Url.Content("~/Scripts/fullcalendar.js")'></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var schedulesAsEvents = [];
+
+            @foreach (var sch in Model.Schedules)
+                {
+                            <text>
+                    schedulesAsEvents.push(
+                        {
+                            title: '@sch.Name',
+                            start: '@sch.StartDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss")',
+                            end: '@sch.ExpirationDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss")',
+                            editable: true,
+                            id: '@sch.ID'
+                        }
+                    );
+                    </text>
+                }
+
+            $('#calendar').fullCalendar({
+                events: schedulesAsEvents,
+                header: {
+                    left: 'title',
+                    center: 'today',
+                    right: 'month,agendaWeek prev,next'
+                },
+                editable: true,
+                eventDrop: function (event, delta, revertFunc) {
+
+                //$("#Schedules_0__StartDate").
+                //    alert(event.title + " start is now " + event.start.format());
+                }
+            });
+        });
+    </script>
+}
+
+<h2>Edytuj kampanię</h2>
+
+<div id='calendar'></div>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    
+    <div class="form-horizontal">
+        <h4>Kampania</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.ID)
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        @Html.EditorFor(model => model.Schedules)
+
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>

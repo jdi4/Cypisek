@@ -17,13 +17,15 @@ namespace Cypisek.Controllers
     {
         private readonly IClientGroupService clientGroupService;
         private readonly IEndPlayerClientService endPlayerClientService;
-        private readonly IClientScheduleService clientScheduleService;
+        private readonly IClientScheduleService clientScheduleService; // remove
+        private readonly ICampaignService campaignService;
 
-        public ClientsController(IClientGroupService cgS, IEndPlayerClientService epcS, IClientScheduleService csS)
+        public ClientsController(IClientGroupService cgS, IEndPlayerClientService epcS, IClientScheduleService csS, ICampaignService cS)
         {
             clientGroupService = cgS;
             endPlayerClientService = epcS;
             clientScheduleService = csS;
+            campaignService = cS;
         }
 
         // GET: Clients
@@ -31,10 +33,10 @@ namespace Cypisek.Controllers
         {
             var model = new ClientManagerViewModel();
 
-            //clients->schedules nav. properties loaded from here
-            var sch = clientScheduleService.GetClientSchedules();
+            //clients->campaigns nav. properties loaded from here
+            var campaigns = campaignService.GetAllCampaigns();
 
-            model.ClientsSchedulesSL = sch
+            model.ClientsCampaignsSL = campaigns
                 .Select(s => new SelectListItem { Value = s.ID.ToString(), Text = s.Name })
                 .ToList();
 
@@ -109,10 +111,12 @@ namespace Cypisek.Controllers
         }
 
         [HttpPost]
-        public ActionResult SetSchedule(ClientManagerFormModel formModel)
+        public ActionResult SetCampaign(ClientManagerFormModel formModel)
         {
             try
             {
+                var clientsToNotify = new List<int>();
+
                 if (ModelState.IsValid)
                 {
                     foreach (var client in formModel.ClientsList)
@@ -122,37 +126,55 @@ namespace Cypisek.Controllers
                             var toEdit = endPlayerClientService.GetEndPlayerClient(client.ID);
                             if (toEdit != null)
                             {
-                                toEdit.ClientScheduleID = formModel.ClientsSchedulesSL;
+                                toEdit.CampaignID = formModel.ClientsCampaignsSL;
                                 toEdit.IsSynchronized = false;
                                 endPlayerClientService.EditEndPlayerClient(toEdit);
 
-                                if (formModel.ClientsSchedulesSL != null)
-                                {
-                                    var context = GlobalHost.ConnectionManager.GetHubContext<ContentHub>();
-                                    string connID = ContentHub.GetClientConnection(toEdit.ID);
-                                    string message = clientScheduleService.GetScheduleAsString((int)formModel.ClientsSchedulesSL);
-
-                                    if (connID != null)
-                                    {
-                                        context.Clients.Client(connID).test1(message);
-                                    }
-
-                                    else
-                                    {
-                                        TempData["message"] = "Brak podlaczonego klienta";
-                                    }
-                                }
+                                clientsToNotify.Add(client.ID);
                             }
                         }
                     }
                 }
                 endPlayerClientService.SaveEndPlayerClient();
 
+                if (formModel.ClientsCampaignsSL != null)
+                {
+                    NotifyCampaignUpdate(clientsToNotify, (int)formModel.ClientsCampaignsSL);
+
+                        //if (!NotifyCampaignUpdate(toEdit.ID))
+                        //    TempData["message"] = "Brak podlaczonego klienta";
+                    //clientsToNotify.ForEach(c => NotifyCampaignUpdate(c));
+
+                }
                 return RedirectToAction("Index");
             }
             catch
             {
                 return View();
+            }
+        }
+
+        private void NotifyCampaignUpdate(List<int> clientIds, int campaignId)
+        {
+            var context = GlobalHost.ConnectionManager.GetHubContext<ContentHub>();
+
+            var schedule = clientScheduleService.GetCurrentSchedule(campaignId);
+
+            if (schedule != null)
+            {
+                string message = clientScheduleService.GetScheduleAsString(schedule);
+
+                foreach (int id in clientIds)
+                {
+                    string connID = ContentHub.GetClientConnection(id);
+                    if (connID != null)
+                    {
+                        context.Clients.Client(connID).test1(message);
+                        //return true;
+                    }
+                    //else
+                    //    return false;
+                }
             }
         }
 

@@ -15,9 +15,13 @@ namespace Cypisek.Services
         ClientSchedule GetClientSchedule(int id);
         void CreateClientSchedule(ClientSchedule ClientSchedule);
         void CreateClientSchedule(ClientSchedule ClientSchedule, IEnumerable<int> filesIDs);
+        void DeleteClientSchedule(int id);
         void SaveClientSchedule();
 
-        string GetScheduleAsString(int scheduleID);
+        IEnumerable<ClientScheduleMediaFilesList> GetSchedulePlaylist(int scheduleId);
+        ClientSchedule GetCurrentSchedule(int campaignId);
+        //string GetScheduleAsString(int scheduleID);
+        string GetScheduleAsString(ClientSchedule schedule);
     }
 
     public class ClientScheduleService : IClientScheduleService
@@ -72,9 +76,9 @@ namespace Cypisek.Services
             }
         }
 
-        public string GetScheduleAsString(int scheduleID)
+        public string GetScheduleAsString(ClientSchedule schedule)
         {
-            var schedule = clientSchedulesRepository.GetById(scheduleID);
+            //var schedule = clientSchedulesRepository.GetById(scheduleID);
             string dateformat = @"dd\/MM\/yyyy HH:mm";
 
             string scheduleString = String.Format("{0},{1},{2},{3}",
@@ -85,7 +89,7 @@ namespace Cypisek.Services
                 );
 
             var playlist = clientScheduleMediaFilesListRepository
-                .GetManyIncludeMediaFiles(p => p.ClientScheduleID == scheduleID);
+                .GetManyIncludeMediaFiles(p => p.ClientScheduleID == schedule.ID);
 
             System.Text.StringBuilder sb = new System.Text.StringBuilder(scheduleString);
 
@@ -95,6 +99,26 @@ namespace Cypisek.Services
             }
 
             return sb.ToString();
+        }
+
+        public ClientSchedule GetCurrentSchedule(int campaignId)
+        {
+            return clientSchedulesRepository.Get(s => s.CampaignID == campaignId && s.ExpirationDate.CompareTo(DateTime.Now) > 0 && s.StartDate.CompareTo(DateTime.Now) <= 0);
+        }
+
+        public void DeleteClientSchedule(int id)
+        {
+            var schedule = clientSchedulesRepository.GetById(id);
+            schedule.MediaPlaylist.ToList().ForEach(
+                p => clientScheduleMediaFilesListRepository.Delete(p)
+                );
+            clientSchedulesRepository.Delete(schedule);
+        }
+
+        public IEnumerable<ClientScheduleMediaFilesList> GetSchedulePlaylist(int scheduleId)
+        {
+            return clientScheduleMediaFilesListRepository
+                .GetManyIncludeMediaFiles(csmfl => csmfl.ClientScheduleID == scheduleId);
         }
 
         #endregion

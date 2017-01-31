@@ -13,12 +13,13 @@ namespace Cypisek.Controllers
 {
     public class SchedulesController : Controller
     {
-        //Cypisek.Services.
+        private readonly ICampaignService campaignService;
         private readonly IClientScheduleService clientScheduleService;
         private readonly IMediaFileService mediaFileService;
 
-        public SchedulesController(IClientScheduleService csS, IMediaFileService mfS)
+        public SchedulesController(IClientScheduleService csS, IMediaFileService mfS, ICampaignService cS)
         {
+            this.campaignService = cS;
             this.clientScheduleService = csS;
             this.mediaFileService = mfS;
         }
@@ -26,7 +27,15 @@ namespace Cypisek.Controllers
         // GET: Schedules
         public ActionResult Index()
         {
-            var schedules = clientScheduleService.GetClientSchedules();
+            var campaigns = campaignService.GetAllCampaignsIncludeSchedules();
+            var model = Mapper.Map<IEnumerable<Campaign>, IEnumerable<CampaignsIndexViewModel>>(campaigns);
+
+            return View(model);
+        }
+
+        public ActionResult CampaignCalendar(int id)
+        {
+            var schedules = campaignService.GetCampaign(id).Schedules;
             var model = Mapper.Map<IEnumerable<ClientSchedule>, IEnumerable<ClientScheduleViewModel>>(schedules);
 
             return View(model);
@@ -38,8 +47,8 @@ namespace Cypisek.Controllers
             return View();
         }
 
-        // GET: Schedules/Create
-        public ActionResult Create()
+        // GET: Schedules/Create/5
+        public ActionResult Create(int cId, string cName)
         {
             var files = mediaFileService.GetMediaFiles();
 
@@ -50,6 +59,9 @@ namespace Cypisek.Controllers
 
             model.MediaFileList = (List<MediaFileSelectViewModel>) 
                 Mapper.Map<IEnumerable<MediaFile>, IEnumerable<MediaFileSelectViewModel>>(files);
+
+            model.CampaignID = cId;
+            model.CampaignName = cName;
 
             return View(model);
         }
@@ -94,41 +106,96 @@ namespace Cypisek.Controllers
             }
         }
 
-        // GET: Schedules/Edit/5
-        public ActionResult Edit(int id)
-        {
+        public ActionResult CreateCampaign()
+        { 
             return View();
         }
 
-        // POST: Schedules/Edit/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult CreateCampaign(CampaignFormViewModel formCampaign)
         {
             try
             {
-                // TODO: Add update logic here
+                if (ModelState.IsValid)
+                {
+                    Campaign newCampaign =
+                        Mapper.Map<CampaignFormViewModel, Campaign>(formCampaign);
+
+                    campaignService.CreateCampaign(newCampaign);
+                    campaignService.CommitChanges();
+
+                }
+                else
+                {
+                    return View(formCampaign);
+                }
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                ViewBag["error"] = ex.Message;
+                return View(formCampaign);
+            }
+        }
+
+        // GET: Schedules/EditCampaign/5
+        public ActionResult EditCampaign(int id)
+        {
+            var campaign = campaignService.GetCampaign(id);
+            var model = Mapper.Map<Campaign, CampaignSchedulesFormViewModel>(campaign);
+
+            return View(model);
+        }
+
+        // POST: Schedules/EditCampaign/5
+        [HttpPost]
+        public ActionResult EditCampaign(CampaignSchedulesFormViewModel formCampaign)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    var edited = Mapper.Map<CampaignSchedulesFormViewModel, Campaign>(formCampaign);
+
+                    campaignService.EditCampaign(edited);
+                    campaignService.CommitChanges();
+                }
 
                 return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return View(formCampaign);
             }
         }
 
-        // GET: Schedules/Delete/5
-        public ActionResult Delete(int id)
+        // GET: Schedules/DeleteSchedule/5
+        public ActionResult DeleteSchedule(int id)
         {
-            return View();
+            var schedule = clientScheduleService.GetClientSchedule(id);
+
+            if (schedule != null)
+            {
+                var model = Mapper.Map<ClientSchedule, ClientScheduleViewModel>(schedule);
+                var playlist = clientScheduleService.GetSchedulePlaylist(id);
+                model.MediaPlaylist = (List<MediaFileSelectViewModel>)
+                        Mapper.Map<IEnumerable<ClientScheduleMediaFilesList>, IEnumerable<MediaFileSelectViewModel>>(playlist);
+                return View(model);
+            }
+            else
+                return RedirectToAction("Index");
+
         }
 
-        // POST: Schedules/Delete/5
+        // POST: Schedules/DeleteSchedule/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult DeleteSchedule(int id, FormCollection collection)
         {
             try
             {
-                // TODO: Add delete logic here
+                clientScheduleService.DeleteClientSchedule(id);
+                clientScheduleService.SaveClientSchedule();
 
                 return RedirectToAction("Index");
             }
