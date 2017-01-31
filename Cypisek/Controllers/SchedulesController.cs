@@ -47,8 +47,8 @@ namespace Cypisek.Controllers
             return View();
         }
 
-        // GET: Schedules/Create
-        public ActionResult Create()
+        // GET: Schedules/Create/5
+        public ActionResult Create(int cId, string cName)
         {
             var files = mediaFileService.GetMediaFiles();
 
@@ -59,6 +59,9 @@ namespace Cypisek.Controllers
 
             model.MediaFileList = (List<MediaFileSelectViewModel>) 
                 Mapper.Map<IEnumerable<MediaFile>, IEnumerable<MediaFileSelectViewModel>>(files);
+
+            model.CampaignID = cId;
+            model.CampaignName = cName;
 
             return View(model);
         }

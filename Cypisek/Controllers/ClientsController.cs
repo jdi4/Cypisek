@@ -159,23 +159,23 @@ namespace Cypisek.Controllers
             var context = GlobalHost.ConnectionManager.GetHubContext<ContentHub>();
 
             var schedule = clientScheduleService.GetCurrentSchedule(campaignId);
-            string message = clientScheduleService.GetScheduleAsString(schedule);
 
-            foreach (int id in clientIds)
+            if (schedule != null)
             {
-                string connID = ContentHub.GetClientConnection(id);
-                if (connID != null)
+                string message = clientScheduleService.GetScheduleAsString(schedule);
+
+                foreach (int id in clientIds)
                 {
-                    context.Clients.Client(connID).test1(message);
-                    //return true;
+                    string connID = ContentHub.GetClientConnection(id);
+                    if (connID != null)
+                    {
+                        context.Clients.Client(connID).test1(message);
+                        //return true;
+                    }
+                    //else
+                    //    return false;
                 }
-                //else
-                //    return false;
             }
-
-
-
-
         }
 
         public ActionResult Test()
