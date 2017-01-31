@@ -10,6 +10,8 @@ namespace Cypisek.ViewModels.Schedules
 {
     public class ClientScheduleFormViewModel : IValidatableObject
     {
+        public int ID { get; set; }
+
         [DisplayName("Nazwa harmonogramu")]
         [Required]
         public string Name { get; set; }

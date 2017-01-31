@@ -139,25 +139,34 @@ namespace Cypisek.Controllers
             }
         }
 
-        // GET: Schedules/Edit/5
-        public ActionResult Edit(int id)
+        // GET: Schedules/EditCampaign/5
+        public ActionResult EditCampaign(int id)
         {
-            return View();
+            var campaign = campaignService.GetCampaign(id);
+            var model = Mapper.Map<Campaign, CampaignSchedulesFormViewModel>(campaign);
+
+            return View(model);
         }
 
-        // POST: Schedules/Edit/5
+        // POST: Schedules/EditCampaign/5
         [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
+        public ActionResult EditCampaign(CampaignSchedulesFormViewModel formCampaign)
         {
             try
             {
-                // TODO: Add update logic here
+                if (ModelState.IsValid)
+                {
+                    var edited = Mapper.Map<CampaignSchedulesFormViewModel, Campaign>(formCampaign);
+
+                    campaignService.EditCampaign(edited);
+                    campaignService.CommitChanges();
+                }
 
                 return RedirectToAction("Index");
             }
             catch
             {
-                return View();
+                return View(formCampaign);
             }
         }
 

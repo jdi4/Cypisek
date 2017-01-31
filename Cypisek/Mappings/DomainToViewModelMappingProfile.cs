@@ -25,10 +25,14 @@ namespace Cypisek.Mappings
 
             CreateMap<ClientSchedule, ClientScheduleViewModel>()
                 .ForMember(vm => vm.MediaPlaylist, map => map.Ignore());
-                //map => map
-                //.MapFrom(m => m.MediaPlaylist.Select( p => p.MediaFile)));
+            //map => map
+            //.MapFrom(m => m.MediaPlaylist.Select( p => p.MediaFile)));
+
+            CreateMap<ClientSchedule, ClientScheduleFormViewModel>();
 
             CreateMap<Campaign, CampaignsIndexViewModel>();
+
+            CreateMap<Campaign, CampaignSchedulesFormViewModel>();
 
             CreateMap<MediaFile, MediaFileViewModel>()
                 .ForMember(vm => vm.FileName, map => map.MapFrom(m => m.Name))

@@ -250,6 +250,7 @@
     <Compile Include="ViewModels\EndPlayerClientViewModel.cs" />
     <Compile Include="ViewModels\MediaLibrary\MediaFileViewModel.cs" />
     <Compile Include="ViewModels\Schedules\CampaignFormViewModel.cs" />
+    <Compile Include="ViewModels\Schedules\CampaignSchedulesFormViewModel.cs" />
     <Compile Include="ViewModels\Schedules\CampaignsIndexViewModel.cs" />
     <Compile Include="ViewModels\Schedules\ClientScheduleFormViewModel.cs" />
     <Compile Include="ViewModels\Schedules\ClientScheduleViewModel.cs" />
@@ -422,11 +423,12 @@
     <Content Include="Views\Schedules\CampaignCalendar.cshtml" />
     <Content Include="Views\Schedules\CreateCampaign.cshtml" />
     <Content Include="Views\Schedules\DeleteSchedule.cshtml" />
+    <Content Include="Views\Schedules\EditCampaign.cshtml" />
+    <Content Include="Views\Shared\EditorTemplates\ClientScheduleFormViewModel.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\" />
-    <Folder Include="Views\Shared\EditorTemplates\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />

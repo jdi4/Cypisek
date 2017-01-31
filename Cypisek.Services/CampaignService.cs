@@ -16,6 +16,7 @@ namespace Cypisek.Services
         Campaign GetCampaign(int id);
         //Campaign GetCampaignIncludeSchedules(int id);
         void CreateCampaign(Campaign Campaign);
+        void EditCampaign(Campaign Campaign);
         void DeleteCampaign(int id);
         void CommitChanges();
 
@@ -27,11 +28,13 @@ namespace Cypisek.Services
     public class CampaignService : ICampaignService
     {
         private readonly ICampaignRepository CampaignsRepository;
+        private readonly IClientScheduleRepository clientScheduleRepository;
         private readonly IUnitOfWork unitOfWork;
 
-        public CampaignService(ICampaignRepository csR, IUnitOfWork unitOfWork)
+        public CampaignService(ICampaignRepository cR, IClientScheduleRepository csR, IUnitOfWork unitOfWork)
         {
-            this.CampaignsRepository = csR;
+            this.CampaignsRepository = cR;
+            this.clientScheduleRepository = csR;
             this.unitOfWork = unitOfWork;
         }
 
@@ -68,6 +71,15 @@ namespace Cypisek.Services
         {
             throw new NotImplementedException();
             //CampaignsRepository.Delete(c => c.ID == id); // cascade schedules
+        }
+
+        public void EditCampaign(Campaign Campaign)
+        {
+            CampaignsRepository.Edit(Campaign);
+            foreach (var schedule in Campaign.Schedules)
+            {
+                clientScheduleRepository.Edit(schedule);
+            }
         }
 
         //public int? GetCurrentScheduleID(int campaignId)

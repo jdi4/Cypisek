@@ -21,6 +21,8 @@ namespace Cypisek.Mappings
 
             CreateMap<CampaignFormViewModel, Campaign>();
 
+            CreateMap<CampaignSchedulesFormViewModel, Campaign>();
+
             CreateMap<ClientGroupFormModel, ClientGroup>();
         }
 
