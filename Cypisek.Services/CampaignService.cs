@@ -16,6 +16,7 @@ namespace Cypisek.Services
         Campaign GetCampaign(int id);
         //Campaign GetCampaignIncludeSchedules(int id);
         void CreateCampaign(Campaign Campaign);
+        void DeleteCampaign(int id);
         void CommitChanges();
 
         //IEnumerable<ClientSchedule> GetAllSchedules
@@ -61,6 +62,12 @@ namespace Cypisek.Services
         public IEnumerable<Campaign> GetAllCampaignsIncludeSchedules()
         {
             return CampaignsRepository.GetAllIncludeSchedules();
+        }
+
+        public void DeleteCampaign(int id)
+        {
+            throw new NotImplementedException();
+            //CampaignsRepository.Delete(c => c.ID == id); // cascade schedules
         }
 
         //public int? GetCurrentScheduleID(int campaignId)

@@ -15,9 +15,10 @@ namespace Cypisek.Services
         ClientSchedule GetClientSchedule(int id);
         void CreateClientSchedule(ClientSchedule ClientSchedule);
         void CreateClientSchedule(ClientSchedule ClientSchedule, IEnumerable<int> filesIDs);
+        void DeleteClientSchedule(int id);
         void SaveClientSchedule();
 
-
+        IEnumerable<ClientScheduleMediaFilesList> GetSchedulePlaylist(int scheduleId);
         ClientSchedule GetCurrentSchedule(int campaignId);
         //string GetScheduleAsString(int scheduleID);
         string GetScheduleAsString(ClientSchedule schedule);
@@ -102,7 +103,22 @@ namespace Cypisek.Services
 
         public ClientSchedule GetCurrentSchedule(int campaignId)
         {
-            return clientSchedulesRepository.Get(s => s.CampaignID == campaignId && s.StartDate >= DateTime.Now);
+            return clientSchedulesRepository.Get(s => s.CampaignID == campaignId && s.ExpirationDate.CompareTo(DateTime.Now) > 0 && s.StartDate.CompareTo(DateTime.Now) <= 0);
+        }
+
+        public void DeleteClientSchedule(int id)
+        {
+            var schedule = clientSchedulesRepository.GetById(id);
+            schedule.MediaPlaylist.ToList().ForEach(
+                p => clientScheduleMediaFilesListRepository.Delete(p)
+                );
+            clientSchedulesRepository.Delete(schedule);
+        }
+
+        public IEnumerable<ClientScheduleMediaFilesList> GetSchedulePlaylist(int scheduleId)
+        {
+            return clientScheduleMediaFilesListRepository
+                .GetManyIncludeMediaFiles(csmfl => csmfl.ClientScheduleID == scheduleId);
         }
 
         #endregion
