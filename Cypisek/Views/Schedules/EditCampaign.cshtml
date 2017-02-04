@@ -10,6 +10,7 @@
     <script src='@Url.Content("~/Scripts/lib/jquery.min.js")'></script>
     <script src='@Url.Content("~/Scripts/lib/moment.min.js")'></script>
     <script src='@Url.Content("~/Scripts/fullcalendar.js")'></script>
+    <script src='@Url.Content("~/Scripts/locale/pl.js")'></script>
 
     <script type="text/javascript">
         $(document).ready(function () {
@@ -42,7 +43,7 @@
                 eventDrop: function (event, delta, revertFunc) {
 
                 //$("#Schedules_0__StartDate").
-                //    alert(event.title + " start is now " + event.start.format());
+                    alert(event.title + " start is now " + event.start.format('L LTS'));
                 }
             });
         });
