@@ -1,5 +1,7 @@
 ﻿@model Cypisek.ViewModels.Schedules.ClientScheduleFormViewModel
 
+<div id="schedule@(Model.ID)">
+        <hr />
 
         @Html.ValidationSummary(true, "", new { @class = "text-danger" })
         @Html.HiddenFor(model => model.ID)
@@ -29,5 +31,5 @@
             </div>
         </div>
 
-
+</div>
 

@@ -6,7 +6,7 @@
 
 @section scripts
 {
-    <link rel='stylesheet' href='@Url.Content("~/Content/fullcalendar.css")' />
+    <link rel='stylesheet' href='@Url.Content("~/Content/fullcalendar.css")' type="text/css" />
     <script src='@Url.Content("~/Scripts/lib/jquery.min.js")'></script>
     <script src='@Url.Content("~/Scripts/lib/moment.min.js")'></script>
     <script src='@Url.Content("~/Scripts/fullcalendar.js")'></script>
@@ -25,7 +25,6 @@
                             title: '@sch.Name',
                             start: '@sch.StartDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss")',
                             end: '@sch.ExpirationDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss")',
-                            editable: true,
                             id: '@sch.ID'
                         }
                     );
@@ -42,8 +41,17 @@
                 editable: true,
                 eventDrop: function (event, delta, revertFunc) {
 
-                //$("#Schedules_0__StartDate").
-                    alert(event.title + " start is now " + event.start.format('L LTS'));
+                    //alert(event.title + " id " + event.id);
+                    var newStartDate = event.start.format('L LTS');
+                    var newEndDate = event.end.format('L LTS');
+                    $("div #schedule" + event.id + " input[name$='.StartDate']").val(newStartDate);
+                    $("div #schedule" + event.id + " input[name$='.ExpirationDate']").val(newEndDate);
+                },
+                eventResize: function (event, delta, revertFunc) {
+
+                    alert(event.title + " resizing " + event.id);
+                    var newEndDate = event.end.format('L LTS');
+                    $("div #schedule" + event.id + " input[name$='.ExpirationDate']").val(newEndDate);
                 }
             });
         });
