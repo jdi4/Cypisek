@@ -39,6 +39,7 @@
                     right: 'month,agendaWeek prev,next'
                 },
                 editable: true,
+                eventOverlap: false,
                 eventDrop: function (event, delta, revertFunc) {
 
                     //alert(event.title + " id " + event.id);
@@ -49,9 +50,14 @@
                 },
                 eventResize: function (event, delta, revertFunc) {
 
-                    alert(event.title + " resizing " + event.id);
                     var newEndDate = event.end.format('L LTS');
                     $("div #schedule" + event.id + " input[name$='.ExpirationDate']").val(newEndDate);
+                },
+                eventClick: function (calEvent, jsEvent, view) {
+
+                    $('html, body').animate({
+                        scrollTop: $("div #schedule" + calEvent.id).offset().top
+                    }, 1000);
                 }
             });
         });
