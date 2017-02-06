@@ -109,15 +109,15 @@ namespace Cypisek.Data
             {
                 Name = "Harmonogram test1",
                 StartDate = DateTime.Now,
-                ExpirationDate = DateTime.Now.AddMonths(2),
+                ExpirationDate = DateTime.Now.AddDays(3).AddHours(5),
                 Campaign = campaign1
              };
 
             var schedule2 = new ClientSchedule()
             {
                 Name = "Harmonogram test2",
-                StartDate = DateTime.Now.AddDays(1),
-                ExpirationDate = DateTime.Now.AddMonths(5),
+                StartDate = DateTime.Now.AddDays(5).AddHours(2),
+                ExpirationDate = DateTime.Now.AddDays(15).AddHours(1),
                 Campaign = campaign1
             };
 

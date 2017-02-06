@@ -161,6 +161,10 @@ namespace Cypisek.Controllers
                     campaignService.EditCampaign(edited);
                     campaignService.CommitChanges();
                 }
+                else
+                {
+                    return View(formCampaign);
+                }
 
                 return RedirectToAction("Index");
             }
