@@ -4,11 +4,54 @@
     ViewBag.Title = "Dodaj harmonogram";
 }
 
+@section scripts
+{
+    <link rel='stylesheet' href='@Url.Content("~/Content/fullcalendar.css")' type="text/css" />
+    <script src='@Url.Content("~/Scripts/lib/jquery.min.js")'></script>
+    <script src='@Url.Content("~/Scripts/lib/moment.min.js")'></script>
+    <script src='@Url.Content("~/Scripts/fullcalendar.js")'></script>
+    <script src='@Url.Content("~/Scripts/locale/pl.js")'></script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var schedulesAsEvents = [];
+
+            @foreach (var sch in Model.OtherSchedules)
+                {
+                            <text>
+                    schedulesAsEvents.push(
+                        {
+                            title: '@sch.Name',
+                            start: '@sch.StartDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss")',
+                            end: '@sch.ExpirationDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss")',
+                            id: '@sch.ID'
+                        }
+                    );
+                    </text>
+                }
+
+            $('#calendar').fullCalendar({
+                events: schedulesAsEvents,
+                header: {
+                    left: 'title',
+                    center: 'today',
+                    right: 'month,agendaWeek prev,next'
+                },
+                editable: false,
+                eventOverlap: false,
+            });
+        });
+    </script>
+}
+
 <div class="label-danger">
     @ViewBag.error
 </div>
 
 <h2>Dodaj harmonogram</h2>
+
+<div id="calendar"></div>
 
 @using (Html.BeginForm())
 {

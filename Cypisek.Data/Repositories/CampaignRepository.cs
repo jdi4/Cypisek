@@ -13,6 +13,7 @@ namespace Cypisek.Data.Repositories
     {
         IEnumerable<Campaign> GetAllIncludeSchedules();
         IEnumerable<Campaign> GetAllIncludeSchedulesWithPlaylists();
+        Campaign GetByIdIncludeSchedules(int id);
     }
 
     public class CampaignRepository : RepositoryBase<Campaign>, ICampaignRepository
@@ -30,6 +31,11 @@ namespace Cypisek.Data.Repositories
             return dbSet//.Include(cmp => cmp.Schedules)
                 .Include(cmp => cmp.Schedules.Select(s => s.MediaPlaylist))
                 .ToList();
+        }
+
+        public Campaign GetByIdIncludeSchedules(int id)
+        {
+            return dbSet.Where(c => c.ID == id).Include(cmp => cmp.Schedules).FirstOrDefault();
         }
     }
 }

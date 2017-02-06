@@ -53,12 +53,6 @@ namespace Cypisek.Controllers
             return View(model);
         }
 
-        // GET: Schedules/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
         // GET: Schedules/Create/5
         public ActionResult Create(int cId, string cName)
         {
@@ -74,6 +68,11 @@ namespace Cypisek.Controllers
 
             model.CampaignID = cId;
             model.CampaignName = cName;
+
+            var campaign = campaignService.GetCmpaignIncludeSchedules(cId);
+
+            model.OtherSchedules = Mapper.Map<IEnumerable<ClientSchedule>, IEnumerable<ClientScheduleViewModel>>
+                (campaign.Schedules).ToList();
 
             return View(model);
         }
