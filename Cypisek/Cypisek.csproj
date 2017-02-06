@@ -425,6 +425,7 @@
     <Content Include="Views\Schedules\DeleteSchedule.cshtml" />
     <Content Include="Views\Schedules\EditCampaign.cshtml" />
     <Content Include="Views\Shared\EditorTemplates\ClientScheduleFormViewModel.cshtml" />
+    <Content Include="Views\MediaLibrary\Delete.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Cypisek.Data
 {
-    public class CypisekSeedData : DropCreateDatabaseAlways<CypisekEntities>
+    public class CypisekSeedData : DropCreateDatabaseIfModelChanges<CypisekEntities>
     {
         protected override void Seed(CypisekEntities context)
         {

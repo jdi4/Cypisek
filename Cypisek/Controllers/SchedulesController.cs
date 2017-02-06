@@ -15,13 +15,13 @@ namespace Cypisek.Controllers
     {
         private readonly ICampaignService campaignService;
         private readonly IClientScheduleService clientScheduleService;
-        private readonly IMediaFileService mediaFileService;
+        private readonly IMediaStorageService mediaStorageService;
 
-        public SchedulesController(IClientScheduleService csS, IMediaFileService mfS, ICampaignService cS)
+        public SchedulesController(IClientScheduleService csS, IMediaStorageService mfS, ICampaignService cS)
         {
             this.campaignService = cS;
             this.clientScheduleService = csS;
-            this.mediaFileService = mfS;
+            this.mediaStorageService = mfS;
         }
 
         // GET: Schedules
@@ -50,7 +50,7 @@ namespace Cypisek.Controllers
         // GET: Schedules/Create/5
         public ActionResult Create(int cId, string cName)
         {
-            var files = mediaFileService.GetMediaFiles();
+            var files = mediaStorageService.GetMediaFiles();
 
             var model = new ClientScheduleFormViewModel();
 
