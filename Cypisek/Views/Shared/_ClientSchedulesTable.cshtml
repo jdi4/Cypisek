@@ -1,5 +1,10 @@
 ﻿@model IEnumerable<Cypisek.ViewModels.Schedules.ClientScheduleViewModel>
 
+<style type="text/css">
+    tr.current{
+        background-color: lightgreen;
+    }
+</style>
 
 <table class="table-condensed">
     <tr>
@@ -17,7 +22,10 @@
 
     @foreach (var item in Model)
     {
-        <tr>
+        var currtime = DateTime.Now;
+        var cl = (item.ExpirationDate > currtime && item.StartDate <= currtime) ? "current" : "";
+
+        <tr class="@(cl)">
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>

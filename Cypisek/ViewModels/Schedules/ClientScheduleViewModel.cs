@@ -38,6 +38,5 @@ namespace Cypisek.ViewModels.Schedules
 
         public virtual ICollection<MediaFileSelectViewModel> MediaPlaylist { get; set; }
 
-        public bool IsCurrent { get; set; } = false;
     }
 }

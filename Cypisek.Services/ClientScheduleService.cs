@@ -104,7 +104,8 @@ namespace Cypisek.Services
         public ClientSchedule GetCurrentSchedule(int campaignId)
         {
             var time = DateTime.Now;
-            return clientSchedulesRepository.Get(s => s.CampaignID == campaignId && s.ExpirationDate > time && s.StartDate <= time);
+            //return clientSchedulesRepository.GetAll().OrderBy(s => s.ExpirationDate).FirstOrDefault()
+            return clientSchedulesRepository.Get(s => s.CampaignID == campaignId && s.ExpirationDate > time);
         }
 
         public void DeleteClientSchedule(int id)

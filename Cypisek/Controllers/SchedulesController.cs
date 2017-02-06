@@ -28,9 +28,19 @@ namespace Cypisek.Controllers
         public ActionResult Index()
         {
             var campaigns = campaignService.GetAllCampaignsIncludeSchedules();
-            var model = Mapper.Map<IEnumerable<Campaign>, IEnumerable<CampaignsIndexViewModel>>(campaigns);
+            var model = Mapper.Map<IEnumerable<Campaign>, IEnumerable<CampaignsIndexViewModel>>(campaigns)
+                .ToList();
 
             //clientScheduleService.GetCurrentSchedule();
+
+            //model.ForEach(c =>
+            //{
+            //    var cur = clientScheduleService.GetCurrentSchedule(c.ID);
+            //    if (cur != null)
+            //    {
+            //        c.Schedules.First(s => s.ID == cur.ID).IsCurrent = true;
+            //    }
+            //});
 
             return View(model);
         }
