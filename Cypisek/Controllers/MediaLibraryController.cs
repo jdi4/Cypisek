@@ -19,17 +19,11 @@ namespace Cypisek.Controllers
             this.storageService = imss;
         }
 
-        //public ActionResult Refresh()
-        //{
-        //    var dbfiles = filesService.GetMediaFiles();
-
-        //    foreach (MediaFile mf in dbfiles)
-        //    {
-
-        //    }
-
-        //    return View();
-        //}
+        public ActionResult Refresh()
+        {
+            storageService.RefreshFileDB();
+            return RedirectToAction("FileBrowser");
+        }
 
         // GET: MediaLibrary
         public ActionResult FileBrowser()
