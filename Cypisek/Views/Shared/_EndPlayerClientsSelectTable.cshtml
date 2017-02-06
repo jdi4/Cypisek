@@ -16,7 +16,7 @@
             @Html.DisplayNameFor(model => model[0].LastConnectionDate)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model[0].ScheduleName)
+            @Html.DisplayNameFor(model => model[0].CampaignName)
         </th>
         @*<th>
             @Html.DisplayNameFor(model => model[0].IsSynchronized)
@@ -43,8 +43,8 @@
             @Html.DisplayFor(Model => Model[i].LastConnectionDate)
         </td>
         <td>
-            @{string scheduleName = Model[i].ClientSchedule == null ? "--Brak--" : Model[i].ClientSchedule.Name; }
-            @Html.DisplayFor(Model => scheduleName)
+            @{string campaignName = Model[i].ClientCampaign == null ? "--Brak--" : Model[i].ClientCampaign.Name; }
+            @Html.DisplayFor(Model => campaignName)
         </td>
         @*<td>
             @(Model[i].IsSynchronized ? "Tak":"Nie")

@@ -30,6 +30,8 @@ namespace Cypisek.Controllers
             var campaigns = campaignService.GetAllCampaignsIncludeSchedules();
             var model = Mapper.Map<IEnumerable<Campaign>, IEnumerable<CampaignsIndexViewModel>>(campaigns);
 
+            //clientScheduleService.GetCurrentSchedule();
+
             return View(model);
         }
 

@@ -13,6 +13,7 @@ namespace Cypisek.Services
     {
         IEnumerable<Campaign> GetAllCampaigns();
         IEnumerable<Campaign> GetAllCampaignsIncludeSchedules();
+        IEnumerable<Campaign> GetAllIncludeSchedulesWithPlaylists();
         Campaign GetCampaign(int id);
         //Campaign GetCampaignIncludeSchedules(int id);
         void CreateCampaign(Campaign Campaign);
@@ -80,6 +81,11 @@ namespace Cypisek.Services
             {
                 clientScheduleRepository.Edit(schedule);
             }
+        }
+
+        public IEnumerable<Campaign> GetAllIncludeSchedulesWithPlaylists()
+        {
+            return CampaignsRepository.GetAllIncludeSchedulesWithPlaylists();
         }
 
         //public int? GetCurrentScheduleID(int campaignId)
