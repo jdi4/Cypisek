@@ -1,5 +1,5 @@
 import glob
-import os
+import os,os.path, sys
 import wx
 import urllib2
 import random
@@ -10,8 +10,13 @@ from signalr import Connection
 from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
 import xml.etree.ElementTree as ET
+import threading
+import MplayerCtrl as mpc
 
-
+#global varaible
+G_newHarm = 1 
+G_harmString=""
+lock = threading.Lock()
 class ViewClass(wx.Panel):
     def __init__(self, parent):
          
@@ -23,34 +28,58 @@ class ViewClass(wx.Panel):
         self.picPaths = []
         self.picTime = []
         self.canPlay=0
+        self.wasVideo=0
        # loadImage()
         Publisher.subscribe(self.PlayImages, ("Play Images"))
-        
+        Publisher.subscribe(self.ScheduleChange, ("Schedule change"))
 
         # layout definition
-        self.mainSizer = wx.BoxSizer(wx.VERTICAL)
+        self.Sizer = wx.BoxSizer(wx.VERTICAL)
         img = wx.EmptyImage(self.photoMaxSize,self.photoMaxSize)
+        #denition of Image viewer
         self.imageCtrl = wx.StaticBitmap(self, wx.ID_ANY, 
                                          wx.BitmapFromImage(img))
-        
-        self.mainSizer.Add(self.imageCtrl, 0, wx.ALL|wx.CENTER, 5)
+        #denition of Video viewer   
+        self.mpc = mpc.MplayerCtrl((self), -1, r'C:\Python27\mplayer\mplayer.exe',size=(600, 600),style=wx.SUNKEN_BORDER|wx.TAB_TRAVERSAL) 
+        self.Sizer.Add(self.mpc, 1, wx.ALL|wx.EXPAND, 5)    
+        self.Sizer.Add(self.imageCtrl, 1, wx.ALL|wx.EXPAND, 5)
+        self.Sizer.Show(0,0,0)
         
         
         self.slideTimer = wx.Timer(None)
         self.slideTimer.Bind(wx.EVT_TIMER, self.update)
-    def PlayImages(self,msg):
         
+    def ScheduleChange(self,msg):
+        print "----Schedule change!"
+        self.currentPicture = 0
+        self.totalPictures = 0
+        self.picPaths = []
+        self.picTime = []
+        if(self.slideTimer.IsRunning()):
+            self.slideTimer.Stop()
+        #self.PlayImages(msg)
+            
+    def PlayImages(self,msg):
+        print "--PlayImages!"
         #msg to picPath i picTime
         self.picPaths=msg.data[0]
         self.picTime=msg.data[1]
         self.currentPicture = 0
         self.totalPictures =len(self.picPaths)
-        self.loadImage(self.picPaths[0])
+        extension = os.path.splitext(self.picPaths[0])[1]
+       
+        if(extension=='.mp4'):
+            self.switch()
+            self.wasVideo=1
+            self.loadVideo(self.picPaths[0])
+        else:
+            self.loadImage(self.picPaths[0])
         self.setScheduleTimer(int(self.picTime[0]))
         
     def loadImage(self, msg):
-        
-        print "wyswietlam: "
+        if(self.wasVideo==1):
+            self.switch()
+        print "wyswietlam zdjecie: "+str(msg)
         image=msg
         image_name = os.path.basename(image)
         img = wx.Image(image, wx.BITMAP_TYPE_ANY)
@@ -68,14 +97,47 @@ class ViewClass(wx.Panel):
         self.imageCtrl.SetBitmap(wx.BitmapFromImage(img))
         #self.imageLabel.SetLabel(image_name)
         self.Refresh()
+        
         Publisher.sendMessage("resize", "")
+    def loadVideo(self,msg):
+        self.mpc = mpc.MplayerCtrl((self), -1, r'C:\Python27\mplayer\mplayer.exe',size=(600, 600),style=wx.SUNKEN_BORDER|wx.TAB_TRAVERSAL) 
+        if(self.wasVideo==0):
+            self.switch()
+            self.Show()
+            print "przelaczam..."
+        print "wyswietlam film: "+str(msg)
+        self.Refresh()
+        self.mpc.Start(msg)
+        self.Refresh() 
+        self.wasVideo=1
+        Publisher.sendMessage("resize", "")  
+    def switch(self):
+        if(self.Sizer.IsShown(0)==1): #videoplayer is shown
+            self.Sizer.Show(0,0,0) #video player is not show
+            self.Sizer.Show(1,1,0) #imageplayer is show
+            self.Refresh()  
+        else:
+            self.Sizer.Show(1,0,0) #imageplaye is not show
+            self.Sizer.Show(0,1,0) #video player is show    
+            self.Refresh()  
     def NextPic(self):
+        self.mpc.Stop()
+        
         if self.currentPicture == self.totalPictures-1:
             self.currentPicture = 0
         else:
             self.currentPicture += 1
-        self.loadImage(self.picPaths[self.currentPicture]) 
+        extension = os.path.splitext(self.picPaths[self.currentPicture])[1]
         
+        if(extension=='.mp4'):
+            
+            self.loadVideo(self.picPaths[self.currentPicture])
+            self.wasVideo=1
+        else:
+                       
+            self.loadImage(self.picPaths[self.currentPicture])      
+            self.wasVideo=0  
+            
     def setScheduleTimer(self, time):
         """
         Starts and stops the slideshow
@@ -84,7 +146,7 @@ class ViewClass(wx.Panel):
         self.slideTimer.Start(time)
             
     def update(self, event):
-        
+        Publisher.sendMessage("check news", "a")
         self.NextPic()
         self.setScheduleTimer(int(self.picTime[self.currentPicture]))
         
@@ -100,80 +162,120 @@ class ViewerFrame(wx.Frame):
         Publisher.subscribe(self.resizeFrame, ("resize"))
         
         self.sizer = wx.BoxSizer(wx.VERTICAL)
-        self.sizer.Add(panel, 1, wx.EXPAND)
+        self.sizer.Add(panel, wx.EXPAND|wx.FIXED_MINSIZE|wx.ALIGN_CENTER)
         self.SetSizer(self.sizer)
-        
+        self.Update()
         self.Show()
         self.sizer.Fit(self)
         self.Center()
         
      def resizeFrame(self, msg):
-        """"""
+        self.Update()
+        self.Show()
+        self.Center()
         self.sizer.Fit(self)
         
 class Bunch:
     def __init__(self,**kwds):
         self.__dict__.update(kwds)
-    
+
+class mainCon(threading.Thread):
+    def __init__(self):
+        print "SignalR Thread init..."
+        threading.Thread.__init__(self)
+        #globaly obcject to keep schedule informtion
+    def run(self):
+        
+        #self.harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,800,620_PSACD_l-150x150.jpg,800,Copley-Square-21019-150x150.jpg,800,Groups_GroupSupport_Team-300x300.jpg,800"
+        
+        print "SignalR Thread run..."
+        def receiveData(data="NULL"):
+            
+            print "---HARM change! Receive data: "+str(data)
+           # Publisher.sendMessage("Schedule change ", picPaths)
+           # getSchedule(harmString):
+           # self.harmString=data
+        def test1(data="NULL"):
+            global G_harmString
+            global G_newHarm
+            print "----HARM RECEIVE: "+str(data)
+            #data="Harmonogram1,07/01/2017 16:00,11/01/2017 11:46,4,12.jpg,8000,620_PSACD_l-150x150.jpg,8000,Copley-Square-21019-150x150.jpg,8000,Groups_GroupSupport_Team-300x300.jpg,8000"
+            print "zadam set harm..."
+            with lock:
+                
+                G_harmString=data
+                G_newHarm=0
+                print "set Gharm to: "+ str(G_harmString)
+             
+                 
+        with Session() as session:
+           connection = Connection("http://cypisek.azurewebsites.net/signalr", session)
+           chat = connection.register_hub('contentHub') #ContentHub
+           #start a connection
+           connection.start()    
+
+        id=3
+        
+        #Autentykacja koncowki
+        print "Autentykacja jako ID "+str(id)
+        chat.client.on('receiveData', receiveData)
+        chat.client.on('test1', test1) 
+        
+        chat.server.invoke('PoorAuthenticate',str(id))
+        time.sleep(1)
+        chat.server.invoke('InvokeSending')
+        
+        with connection:
+            connection.wait(1000)    
 class main():
     def __init__(self):
+        Publisher.subscribe(self.setHarm, ("set harm"))
+        Publisher.subscribe(self.checkNews, ("check news"))
         #globaly obcject to keep schedule informtion
         self.harm = Bunch() 
-        def receiveData(data="NULL"):
-            print "Receive data: "+str(data) 
-            #self.harmString=data
-        def test1(data="NULL"):
-            print "---------------Jordan mowi "+str(data) 
-            #self.harmString=data    
-        if (self.internetCheck()):
-                   
-            
-            #harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,8,chalets_2.jpg,400,chalets_3.jpg,800,chalets_4.jpg,700,chalets_big.jpg,999,zoom1.jpg,854,zoom2.jpg,924,zoom3.jpg,808,zoom4.jpg,980"   
-            self.harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,800,620_PSACD_l-150x150.jpg,800,Copley-Square-21019-150x150.jpg,800,Groups_GroupSupport_Team-300x300.jpg,800"
-            #harmString="TestowyHarm,3,obraz1.jpg,10,obraz2.jpg,10,obraz3.jpg,10" 
-            #url= "https://pbs.twimg.com/profile_images/580157476512739328/N2VXzbVN.jpg"
-            #url2="https://thumbs.dreamstime.com/z/pretty-girl-cup-hot-tea-winter-forest-43545393.jpg"
-            #self.getImage("chalets_2")
-            
-            #Publisher.sendMessage("update images", picPaths)
-             
-            with Session() as session:
-                connection = Connection("http://cypisek.azurewebsites.net/signalr", session)
-                chat = connection.register_hub('contentHub') #ContentHub
-                #start a connection
-                connection.start()    
-                
-            
-          # print test;
-            #chat.client.
-            #chat.client.on('setHarm', setHarm)
-                       #chat.client.on('setImage', setImage)  
-            #wysylanie ID koncowki
-            
-            #Autentykacja koncowki
-            chat.server.invoke('PoorAuthenticate','3')
-            chat.client.on('receiveData', receiveData)
-            chat.client.on('test1', test1) 
- 
-            chat.server.invoke('InvokeSending')
-            #with connection:
-            #  connection.wait(100)
+        self.harmString=""
+        self.filelist=""
+        self.dirfiles=""
+
+        if(self.internetCheck()):
               
+             #self.harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,8000,620_PSACD_l-150x150.jpg,8000,Copley-Square-21019-150x150.jpg,8000,Groups_GroupSupport_Team-300x300.jpg,8000"
+             #with connection:
+             #  connection.wait(100)
              
+             while (1):
+                 
+                 print "Oczekiwanie na harmonogram..."
+                 time.sleep(1)
+                 if(self.checkNews()):
+                     print "wypadam!"
+                     break
+                 
              
-             
-            self.getSchedule(self.harmString)
-            self.writeXML()
-            self.playSchedule()
-            
         else:
-            self.readXML()
-            #playschedule bez pobierania
-            self.playSchedule(1)  
-   
-       
-    def setHarm(self):
-        self.harm()       
+             self.readXML()
+             #playschedule bez pobierania
+             self.playSchedule(1)  
+    
+    def checkNews(self,msg=""):
+        print "Check news!"
+        global G_newHarm
+        global G_harmString
+        if(int(G_newHarm)==0):
+           print "receive G_harmString!:"+str(G_harmString)
+           self.setHarm(G_harmString)
+           with lock:
+              G_newHarm=1
+           
+           return 1   
+        else:
+            return 0    
+    def setHarm(self,msg):
+        print "SetHarm: Ustawiam harm..."
+        self.harmString=msg
+        self.getSchedule(self.harmString)
+        self.writeXML()
+        self.playSchedule()       
     def writeXML(self):
         a=ET.Element('config')
         b1=ET.SubElement(a,"ID").text=self.harm.ID
@@ -222,11 +324,13 @@ class main():
          nowTime=time.strptime(nowTime,"%d/%m/%Y %H:%M")
          print(nowTime)
          print(playStart)  
-         print(playEnd)   
+         print(playEnd) 
+         self.delImages(self.harm.files)  
          for index in range(0,count):
              picPath.append(self.harm.files[index])
              picTime.append(self.harm.timers[index])
              if (offline==0):
+                 
                 self.getImage(self.harm.files[index])
              
          msg=[picPath, picTime]
@@ -239,7 +343,7 @@ class main():
              if(nowTime>=playStart) and (nowTime<=playEnd):
                 isHarm=0
                 print "Harmonogram start..."
-                
+                Publisher.sendMessage("Schedule change", msg)
                 Publisher.sendMessage("Play Images", msg)
              else:
                 print "Oczekiwanie na wlaczenie harmonogramu..."  
@@ -249,18 +353,36 @@ class main():
                 print ""
                 time.sleep(5)  
                 #self.waitToStart(msg,playStart,playEnd)            
-    
-    def getImage(self,file_name):
-        #pic_path="http://cypisek.azurewebsites.net/storage/images/"+str(file_name)
-        pic_path="https://oa.org/files/jpg/"
-        url=pic_path+str(file_name)
-        print( 'Pobrano zdjecie:', file_name)
-       # file_name= file_name+'.jpg'
-        with open(file_name,'wb') as f:
-            f.write(urllib2.urlopen(url).read())
-            f.close()
+    def delImages(self,newFileList):
         
-          
+        count=len(newFileList)
+        self.dirfiles=glob.glob('*.jpg')
+        self.dirfiles.extend(glob.glob('*.avi'))
+        self.dirfiles.extend(glob.glob('*.mp4'))
+        
+        for file in self.dirfiles:
+            self.filelist=self.filelist+str(file)+","
+            if (file not in newFileList):
+                print "Usuwam plik "+str(file)
+                os.remove(file)
+                
+
+            
+        
+    def getImage(self,file_name):
+        pic_path="http://cypisek.azurewebsites.net/mediastorage/"
+        
+        #pic_path="https://oa.org/files/jpg/"
+        if (file_name not in self.dirfiles):
+            url=pic_path+str(file_name)
+            print( 'Pobrano :', file_name)
+           # file_name= file_name+'.jpg'
+            with open(file_name,'wb') as f:
+                f.write(urllib2.urlopen(url).read())
+                f.close()
+        else:   
+            print "Plik "+str(file_name)+" juz istnieje"
+        
         print "zaladowano "+str(file_name)
         
     def setID(self):
@@ -293,10 +415,13 @@ class main():
             w=w-1
         self.harm=Bunch(schedule_name=words[0],startTime=startTime,endTime=endTime,ID=self.setID(),files=lista1,timers=lista2) 
         
+glowna= mainCon()
+glowna.start() 
+      
 if __name__ == "__main__":
     
     app = wx.App()
     frame = ViewerFrame()
-    main()
+    main=main() 
     app.MainLoop()
         

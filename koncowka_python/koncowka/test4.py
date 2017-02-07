@@ -10,12 +10,13 @@ from signalr import Connection
 from wx.lib.pubsub import setuparg1
 from wx.lib.pubsub import pub as Publisher
 import xml.etree.ElementTree as ET
-import threading
+import threading,thread
 import MplayerCtrl as mpc
 
 #global varaible
 G_newHarm = 1 
 G_harmString=""
+G_endHarm = 0
 lock = threading.Lock()
 class ViewClass(wx.Panel):
     def __init__(self, parent):
@@ -75,8 +76,13 @@ class ViewClass(wx.Panel):
         else:
             self.loadImage(self.picPaths[0])
         self.setScheduleTimer(int(self.picTime[0]))
+         
+        
         
     def loadImage(self, msg):
+         
+        
+          
         if(self.wasVideo==1):
             self.switch()
         print "wyswietlam zdjecie: "+str(msg)
@@ -95,10 +101,9 @@ class ViewClass(wx.Panel):
         img = img.Scale(NewW,NewH)
 
         self.imageCtrl.SetBitmap(wx.BitmapFromImage(img))
-        #self.imageLabel.SetLabel(image_name)
-        self.Refresh()
+
+         
         
-        Publisher.sendMessage("resize", "")
     def loadVideo(self,msg):
         self.mpc = mpc.MplayerCtrl((self), -1, r'C:\Python27\mplayer\mplayer.exe',size=(600, 600),style=wx.SUNKEN_BORDER|wx.TAB_TRAVERSAL) 
         if(self.wasVideo==0):
@@ -106,20 +111,19 @@ class ViewClass(wx.Panel):
             self.Show()
             print "przelaczam..."
         print "wyswietlam film: "+str(msg)
-        self.Refresh()
+         
         self.mpc.Start(msg)
-        self.Refresh() 
-        self.wasVideo=1
-        Publisher.sendMessage("resize", "")  
+          
+        self.wasVideo=1 
     def switch(self):
         if(self.Sizer.IsShown(0)==1): #videoplayer is shown
             self.Sizer.Show(0,0,0) #video player is not show
             self.Sizer.Show(1,1,0) #imageplayer is show
-            self.Refresh()  
+               
         else:
             self.Sizer.Show(1,0,0) #imageplaye is not show
             self.Sizer.Show(0,1,0) #video player is show    
-            self.Refresh()  
+               
     def NextPic(self):
         self.mpc.Stop()
         
@@ -135,7 +139,8 @@ class ViewClass(wx.Panel):
             self.wasVideo=1
         else:
                        
-            self.loadImage(self.picPaths[self.currentPicture])      
+            self.loadImage(self.picPaths[self.currentPicture])
+               
             self.wasVideo=0  
             
     def setScheduleTimer(self, time):
@@ -143,9 +148,10 @@ class ViewClass(wx.Panel):
         Starts and stops the slideshow
         """
         #po skonczeniu odliczania wywoluje metode update
-        self.slideTimer.Start(time)
+        self.slideTimer.Start(time*1000)
             
     def update(self, event):
+        
         Publisher.sendMessage("check news", "a")
         self.NextPic()
         self.setScheduleTimer(int(self.picTime[self.currentPicture]))
@@ -183,59 +189,142 @@ class mainCon(threading.Thread):
     def __init__(self):
         print "SignalR Thread init..."
         threading.Thread.__init__(self)
+        with Session() as session:
+            self.connection=Connection("http://cypisek.azurewebsites.net/signalr", session)
+            self.chat = self.connection.register_hub('contentHub')
         #globaly obcject to keep schedule informtion
-    def run(self):
+        self.t1 = threading.Thread(target=self.conThread)
+        self.t2 = threading.Thread(target=self.listThread)
+    def listThread(self):
+        global G_endHarm
+        print "ListThread Thread run..."
+        
+        while(1):
+            time.sleep(8)
+            glowna.invokeSchedule()
+            
+             
+            print "Slucham.."        
+            with lock:
+                
+                if(G_endHarm==1):
+                    G_endHarm=0
+                    print "Wywolanie CheckSchedule!"
+                    
+                    #self.chat.server.invoke('CheckSchedule')
+                
+      
+    def conThread(self): 
+        
         
         #self.harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,800,620_PSACD_l-150x150.jpg,800,Copley-Square-21019-150x150.jpg,800,Groups_GroupSupport_Team-300x300.jpg,800"
         
-        print "SignalR Thread run..."
+        print "conThread Thread run..."
         def receiveData(data="NULL"):
             
             print "---HARM change! Receive data: "+str(data)
            # Publisher.sendMessage("Schedule change ", picPaths)
            # getSchedule(harmString):
-           # self.harmString=data
+           # self.harmString=data 
+        def invokeSchedule(self):
+            self.chat.server.invoke('InvokeSending')
+            #self.chat.server.invoke('CheckSchedule')
+        #create error handler
+    
         def test1(data="NULL"):
+                       
             global G_harmString
             global G_newHarm
+        
             print "----HARM RECEIVE: "+str(data)
             #data="Harmonogram1,07/01/2017 16:00,11/01/2017 11:46,4,12.jpg,8000,620_PSACD_l-150x150.jpg,8000,Copley-Square-21019-150x150.jpg,8000,Groups_GroupSupport_Team-300x300.jpg,8000"
             print "zadam set harm..."
+                  
             with lock:
                 
                 G_harmString=data
                 G_newHarm=0
                 print "set Gharm to: "+ str(G_harmString)
              
-                 
-        with Session() as session:
-           connection = Connection("http://cypisek.azurewebsites.net/signalr", session)
-           chat = connection.register_hub('contentHub') #ContentHub
+        
+        #with Session() as session:
+           #connection = Connection("http://cypisek.azurewebsites.net/signalr", session)
+          # chat = connection.register_hub('contentHub') #ContentHub
            #start a connection
-           connection.start()    
+        def print_error(error):
+            print('error: ', error)
+        def print_start():
+            print('starting: ')
+            self.chat.server.invoke('InvokeSending') 
+        def print_stop(error):
+            print('stoppting: ')
+        def print_receive(error):
+            print('receive: ', error)            
+        self.connection.start()    
 
-
+        id=2
+        
         #Autentykacja koncowki
-        print "Autentykacja jako ID 2"
-        chat.client.on('receiveData', receiveData)
-        chat.client.on('test1', test1) 
+        print "Autentykacja jako ID "+str(id)
+
         
-        chat.server.invoke('PoorAuthenticate','2')
+        self.chat.server.invoke('PoorAuthenticate',str(id))
+        self.chat.client.on('receiveData', receiveData)
+        self.chat.client.on('test1', test1)
+       # chat.client.on('CheckSchedule', CheckSchedule)
         time.sleep(1)
-        chat.server.invoke('InvokeSending')
+        self.chat.server.invoke('InvokeSending')  
+        #chat.server.invoke('CheckSchedule')
         
-        with connection:
-            connection.wait(1000)    
+        self.connection.error += print_error
+        self.connection.starting += print_start
+        self.connection.stopping += print_stop
+        #self.connection.received += print_receive
+        #self.connection.stopping += polaczznowu
+    
+        while(1):
+            self.connection.start()
+            self.chat.server.invoke('InvokeSending') 
+            global G_endHarm
+            self.chat.server.invoke('InvokeSending')      
+            self.chat.server.invoke('PoorAuthenticate',str(id))
+            print "Slucha..."
+            time.sleep(8)
+            self.connection.close()
+  
+            with self.connection:
+                self.connection.wait(5)
+            
+            
+            with lock:
+                
+                if(G_endHarm==1):
+                    G_endHarm=0
+                    print "Wywolanie CheckSchedule!"
+                    
+                    self.chat.server.invoke('CheckSchedule')
+    def invokeSchedule(self):
+        self.chat.server.invoke('InvokeSending')
+    def run(self):
+        
+        self.t1.start()
+        #self.t2.start()
+        self.t1.join()
+        #self.t2.join()
+        
+                          
 class main():
     def __init__(self):
         Publisher.subscribe(self.setHarm, ("set harm"))
         Publisher.subscribe(self.checkNews, ("check news"))
+        
+        
         #globaly obcject to keep schedule informtion
         self.harm = Bunch() 
         self.harmString=""
         self.filelist=""
         self.dirfiles=""
-
+        self.harmIsSet=0
         if(self.internetCheck()):
               
              #self.harmString="Harmonogram1,07/01/2017 16:00,09/01/2017 11:46,4,12.jpg,8000,620_PSACD_l-150x150.jpg,8000,Copley-Square-21019-150x150.jpg,8000,Groups_GroupSupport_Team-300x300.jpg,8000"
@@ -247,7 +336,9 @@ class main():
                  print "Oczekiwanie na harmonogram..."
                  time.sleep(1)
                  if(self.checkNews()):
+                     
                      print "wypadam!"
+                     
                      break
                  
              
@@ -257,12 +348,22 @@ class main():
              self.playSchedule(1)  
     
     def checkNews(self,msg=""):
-        print "Check news!"
+        #print "Check news!"
+        
         global G_newHarm
         global G_harmString
+        global G_endHarm
+        if(self.harmIsSet==1):
+            if(self.checkHarm()==0):
+                print"--------------- Harmonogram wygasl!"
+                with lock:
+                    G_endHarm=1                                 
+                
         if(int(G_newHarm)==0):
            print "receive G_harmString!:"+str(G_harmString)
            self.setHarm(G_harmString)
+           self.harmIsSet=1;
+           
            with lock:
               G_newHarm=1
            
@@ -314,7 +415,7 @@ class main():
          playEnd=self.harm.endTime;
          
          playStart=time.strptime(playStart,"%d/%m/%Y %H:%M")
-         playEnd=time.strptime(playEnd,"%d/%m/%Y %H:%M")
+         playEnd=time.strptime(playEnd,"po%d/%m/%Y %H:%M")
          #1 arg to data 2arg to czas
          #playStart=playStart.split(" ")
          #playEnd=playEnd.split(" ")
@@ -351,7 +452,22 @@ class main():
                 print "Harmonogram start: "+str(playStart.tm_hour)+":"+str(playStart.tm_min)+" "+str(playStart.tm_mday)+"/"+str(playStart.tm_mon)+"/"+str(playStart.tm_year)
                 print ""
                 time.sleep(5)  
-                #self.waitToStart(msg,playStart,playEnd)            
+                #self.waitToStart(msg,playStart,playEnd)
+    def checkHarm(self):
+         nowTime=datetime.datetime.now()
+         nowTime=nowTime.strftime("%d/%m/%Y %H:%M")
+         nowTime=time.strptime(nowTime,"%d/%m/%Y %H:%M")
+         playStart=self.harm.startTime;
+         playEnd=self.harm.endTime;
+         
+         playStart=time.strptime(playStart,"%d/%m/%Y %H:%M")
+         playEnd=time.strptime(playEnd,"%d/%m/%Y %H:%M")
+         if(nowTime>=playStart) and (nowTime<=playEnd):
+                return 1;
+         else:
+             
+                return 0; 
+                                         
     def delImages(self,newFileList):
         
         count=len(newFileList)
@@ -415,7 +531,8 @@ class main():
         self.harm=Bunch(schedule_name=words[0],startTime=startTime,endTime=endTime,ID=self.setID(),files=lista1,timers=lista2) 
         
 glowna= mainCon()
-glowna.start() 
+glowna.start()
+
       
 if __name__ == "__main__":
     
