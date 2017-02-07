@@ -25,12 +25,12 @@ namespace Cypisek.ViewModels.Schedules
         public ICollection<ClientScheduleViewModel> OtherSchedules { get;  set;}
 
         [DisplayName("Data rozpoczęcia")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd.MM.yyyy HH:mm}")]
         [Range(typeof(DateTime), "1/1/2001", "1/1/2112", ErrorMessage = "Date is out of Range")]
         public DateTime StartDate { get; set; } = DateTime.Now;
 
         [DisplayName("Data wygaśnięcia")]
-        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:dd.MM.yyyy HH:mm}")]
         [Range(typeof(DateTime), "1/1/2001", "1/1/2112", ErrorMessage = "Date is out of Range")]
         public DateTime ExpirationDate { get; set; } = DateTime.Now.AddDays(7);
 

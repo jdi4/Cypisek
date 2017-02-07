@@ -94,10 +94,10 @@
                     @Html.DisplayFor(modelItem => item.Name)
                 </td>
                 <td>
-                    @Html.ActionLink("Dodaj harmonogram", "Create", new { cId = item.ID, cName = item.Name }) |
+                    @Html.ActionLink("Dodaj harmonogram", "Create", new { cId = item.ID}) |
                     @Html.ActionLink("Edycja", "EditCampaign", new { id = item.ID }) |
                     @*@Html.ActionLink("Kalendarz", "cal", new { id = item.ID }) |*@
-                    @Html.ActionLink("Usuń", "DeleteCampaign", new { id = item.ID })
+                    @*@Html.ActionLink("Usuń", "DeleteCampaign", new { id = item.ID })*@
                 </td>
             </tr>
                 <tr>

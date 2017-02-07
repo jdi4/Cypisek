@@ -54,7 +54,7 @@ namespace Cypisek.Controllers
         }
 
         // GET: Schedules/Create/5
-        public ActionResult Create(int cId, string cName)
+        public ActionResult Create(int cId)
         {
             var files = mediaStorageService.GetMediaFiles();
 
@@ -66,11 +66,13 @@ namespace Cypisek.Controllers
             model.MediaFileList = (List<MediaFileSelectViewModel>) 
                 Mapper.Map<IEnumerable<MediaFile>, IEnumerable<MediaFileSelectViewModel>>(files);
 
-            model.CampaignID = cId;
-            model.CampaignName = cName;
+            //model.CampaignID = cId;
+            //model.CampaignName = cName;
 
             var campaign = campaignService.GetCmpaignIncludeSchedules(cId);
 
+            model.CampaignID = cId;
+            model.CampaignName = campaign.Name;
             model.OtherSchedules = Mapper.Map<IEnumerable<ClientSchedule>, IEnumerable<ClientScheduleViewModel>>
                 (campaign.Schedules).ToList();
 
@@ -174,7 +176,7 @@ namespace Cypisek.Controllers
                 }
                 else
                 {
-                    return View(formCampaign);
+                    return RedirectToAction("Create", new { id = formCampaign.ID });
                 }
 
                 return RedirectToAction("Index");

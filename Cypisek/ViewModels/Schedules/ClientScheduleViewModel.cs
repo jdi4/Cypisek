@@ -21,11 +21,11 @@ namespace Cypisek.ViewModels.Schedules
         public string CampaignName { get; set; }
 
         [DisplayName("Data rozpoczęcia")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}")]
         public DateTime StartDate { get; set; }
 
         [DisplayName("Data wygaśnięcia")]
-        [DisplayFormat(DataFormatString = "{0:dd/MM/yyyy HH:mm}")]
+        [DisplayFormat(DataFormatString = "{0:dd.MM.yyyy HH:mm}")]
         public DateTime ExpirationDate { get; set; }
 
         [DisplayName("Liczba plików")]
