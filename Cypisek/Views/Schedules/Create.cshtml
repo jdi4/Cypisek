@@ -17,20 +17,22 @@
 
             var schedulesAsEvents = [];
 
-            @foreach (var sch in Model.OtherSchedules)
+            @*if (Model.OtherSchedules != null) {
+
+                @foreach (var sch in Model.OtherSchedules)
                 {
                             <text>
-                    schedulesAsEvents.push(
-                        {
-                            title: '@sch.Name',
-                            start: '@sch.StartDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss")',
-                            end: '@sch.ExpirationDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss")',
-                            id: '@sch.ID'
-                        }
-                    );
-                    </text>
+                schedulesAsEvents.push(
+                    {
+                        title: '@sch.Name',
+                        start: '@sch.StartDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss")',
+                        end: '@sch.ExpirationDate.ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss")',
+                        id: '@sch.ID'
+                    }
+                );
+                </text>
                 }
-
+            }
             $('#calendar').fullCalendar({
                 events: schedulesAsEvents,
                 header: {
@@ -41,7 +43,7 @@
                 editable: false,
                 eventOverlap: false,
             });
-        });
+        });*@
     </script>
 }
 
@@ -51,7 +53,7 @@
 
 <h2>Dodaj harmonogram</h2>
 
-<div id="calendar"></div>
+@*<div id="calendar"></div>*@
 
 @using (Html.BeginForm())
 {

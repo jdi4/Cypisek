@@ -79,7 +79,7 @@ namespace Cypisek.Services
         public string GetScheduleAsString(ClientSchedule schedule)
         {
             //var schedule = clientSchedulesRepository.GetById(scheduleID);
-            string dateformat = @"dd\/MM\/yyyy HH:mm";
+            string dateformat = @"MM\/dd\/yyyy HH:mm";
 
             string scheduleString = String.Format("{0},{1},{2},{3}",
                 schedule.Name,
