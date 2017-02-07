@@ -267,6 +267,11 @@ namespace Cypisek.Controllers
             }
         }
 
+        private void TestSchedules()
+        {
+
+        }
+
         // GET: Clients/DeleteGroup
         public ActionResult DeleteGroup(int id)
         {
@@ -290,6 +295,17 @@ namespace Cypisek.Controllers
             {
                 return View();
             }
+        }
+
+        // GET: API Clients/GetCurSchedule
+        public ActionResult GetCurSchedule(int id)
+        {
+            var schedule = clientScheduleService.GetClientSchedule(id);
+            string msg = clientScheduleService.GetScheduleAsString(schedule);
+
+            //NotifyCampaignUpdate()
+
+            return Content(msg);
         }
     }
 }
