@@ -300,8 +300,16 @@ namespace Cypisek.Controllers
         // GET: API Clients/GetCurSchedule
         public ActionResult GetCurSchedule(int id)
         {
-            var schedule = clientScheduleService.GetClientSchedule(id);
-            string msg = clientScheduleService.GetScheduleAsString(schedule);
+            var cmpId = endPlayerClientService.GetEndPlayerClient(id).CampaignID;
+            string msg = "";
+
+            if (cmpId != null)
+            {
+                var schedule = clientScheduleService.GetClientSchedule((int)cmpId);
+                if (schedule != null)
+                    msg = clientScheduleService.GetScheduleAsString(schedule);
+            }
+
 
             //NotifyCampaignUpdate()
 
