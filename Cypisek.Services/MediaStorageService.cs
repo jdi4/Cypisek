@@ -12,31 +12,43 @@ namespace Cypisek.Services
 {
     public interface IMediaStorageService
     {
-        IEnumerable<MediaFile> GetFiles();
+        IEnumerable<MediaFile> GetMediaFiles();
+        MediaFile GetMediaFile(int fileID);
         void AddFile(Stream s, string fileName);
+        bool DeleteFile(int fileID);
+
         void RefreshFileDB();
+
+        IEnumerable<ClientScheduleMediaFilesList> GetMediaFileSchedules(int fileID);
     }
 
     public class MediaStorageService : IMediaStorageService
     {
         private readonly string StorageDirPath;
-        private readonly IMediaFileRepository mediaFileRepository;
+        private readonly IMediaFileRepository mediaFilesRepository;
+        private readonly IClientScheduleMediaFilesListRepository filesToSchedulesRepository;
         private readonly IUnitOfWork unitOfWork;
 
-        public MediaStorageService(string storageDirPath, IMediaFileRepository mediaFileRepository, IUnitOfWork uow)
+        public MediaStorageService(string storageDirPath, IMediaFileRepository mediaFileRepository, IClientScheduleMediaFilesListRepository csmfl, IUnitOfWork uow)
         {
             this.StorageDirPath = storageDirPath;
-            this.mediaFileRepository = mediaFileRepository;
+            this.mediaFilesRepository = mediaFileRepository;
+            this.filesToSchedulesRepository = csmfl;
             this.unitOfWork = uow;
         }
 
         public void RefreshFileDB()
         {
-            var files = GetFiles();
+            var filesOnDisk = ReadFiles();
+            var filesInDB = GetMediaFiles();
+
+            mediaFilesRepository.Delete(f => true);
+
+            //filesInDB.Except(filesOnDisk, )
             
-            foreach (MediaFile f in files)
+            foreach (MediaFile f in filesOnDisk)
             {
-                mediaFileRepository.Add(f);
+                mediaFilesRepository.Add(f);
             }
 
             unitOfWork.Commit();
@@ -52,7 +64,7 @@ namespace Cypisek.Services
             s.CopyTo(saveStream);
             saveStream.Close();
 
-            mediaFileRepository.Add(new MediaFile()
+            mediaFilesRepository.Add(new MediaFile()
             {
                 Name = fileName,
                 Path = path,
@@ -61,7 +73,7 @@ namespace Cypisek.Services
             unitOfWork.Commit();
         }
 
-        public IEnumerable<MediaFile> GetFiles()
+        private IEnumerable<MediaFile> ReadFiles()
         {
             DirectoryInfo dir = new DirectoryInfo(StorageDirPath);
             var files = dir.GetFiles();
@@ -75,6 +87,41 @@ namespace Cypisek.Services
             }
 
             return mediaFiles;
+        }
+
+        public IEnumerable<MediaFile> GetMediaFiles()
+        {
+            return mediaFilesRepository.GetAll();
+        }
+
+        public bool DeleteFile(int fileID)
+        {
+            var file = mediaFilesRepository.GetById(fileID);
+
+            if (file != null)
+            {
+                if (file.ClientSchedulesList.Count > 0)
+                    return false;
+                else
+                {
+                    File.Delete(file.Path);
+                    mediaFilesRepository.Delete(file);
+                }
+
+            }
+
+            unitOfWork.Commit();
+            return true;
+        }
+
+        public MediaFile GetMediaFile(int fileID)
+        {
+            return mediaFilesRepository.GetById(fileID);
+        }
+
+        public IEnumerable<ClientScheduleMediaFilesList> GetMediaFileSchedules(int fileID)
+        {
+            return filesToSchedulesRepository.GetManyIncludeSchedules(fs => fs.MediaFileID == fileID);
         }
     }
 }

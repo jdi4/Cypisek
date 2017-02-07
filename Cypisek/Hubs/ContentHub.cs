@@ -45,14 +45,16 @@ namespace Cypisek.Hubs
                 client.IsConnected = true;
                 endPlayerClientService.EditEndPlayerClient(client);
                 endPlayerClientService.SaveEndPlayerClient();
-                Clients.Caller.confirm(true);
+                //Clients.Caller.confirm(true);
 
                 SendCurrentSchedule(client.CampaignID);
+
+
             }
-            else
-            {
-                Clients.Caller.confirm(false);
-            }
+            //else
+            //{
+            //    Clients.Caller.confirm(false);
+            //}
         }
 
         public void InvokeSending()

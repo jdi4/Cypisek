@@ -13,6 +13,7 @@ namespace Cypisek.Data.Repositories
     public interface IClientScheduleMediaFilesListRepository : IRepository<ClientScheduleMediaFilesList>
     {
         IEnumerable<ClientScheduleMediaFilesList> GetManyIncludeMediaFiles(Expression<Func<ClientScheduleMediaFilesList, bool>> where);
+        IEnumerable<ClientScheduleMediaFilesList> GetManyIncludeSchedules(Expression<Func<ClientScheduleMediaFilesList, bool>> where);
     }
 
     public class ClientScheduleMediaFilesListRepository : RepositoryBase<ClientScheduleMediaFilesList>, IClientScheduleMediaFilesListRepository
@@ -23,6 +24,11 @@ namespace Cypisek.Data.Repositories
         public IEnumerable<ClientScheduleMediaFilesList> GetManyIncludeMediaFiles(Expression<Func<ClientScheduleMediaFilesList, bool>> where)
         {
             return dbSet.Where(where).Include(mp => mp.MediaFile).ToList();
+        }
+
+        public IEnumerable<ClientScheduleMediaFilesList> GetManyIncludeSchedules(Expression<Func<ClientScheduleMediaFilesList, bool>> where)
+        {
+            return dbSet.Where(where).Include(mp => mp.ClientSchedule).ToList();
         }
     }
 }
