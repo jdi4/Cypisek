@@ -19,5 +19,9 @@ namespace Cypisek.ViewModels.MediaLibrary
         {
             get { return Utilities.BytesToString(this.Bytes); }
         }
+
+        public List<string> ScheduleNames { get; set; }
+
+        public string Message { get; set; }
     }
 }

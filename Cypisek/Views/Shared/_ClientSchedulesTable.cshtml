@@ -1,0 +1,48 @@
+﻿@model IEnumerable<Cypisek.ViewModels.Schedules.ClientScheduleViewModel>
+
+<style type="text/css">
+    tr.current{
+        background-color: lightgreen;
+    }
+</style>
+
+<table class="table-condensed">
+    <tr>
+        <th>Przydzielone harmonogramy</th>
+    </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Name)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.StartDate)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ExpirationDate)
+        </th>
+        <th></th>
+    </tr>
+
+    @foreach (var item in Model)
+    {
+        var currtime = DateTime.Now;
+        var cl = (item.ExpirationDate > currtime && item.StartDate <= currtime) ? "current" : "";
+
+        <tr class="@(cl)">
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.StartDate)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ExpirationDate)
+            </td>
+            <td>
+                @Html.ActionLink("Usuń", "DeleteSchedule", "Schedules", new { id = item.ID }, new { })
+            </td>
+        </tr>
+    }
+</table>
+
+

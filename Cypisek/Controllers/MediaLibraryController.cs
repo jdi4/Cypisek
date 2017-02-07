@@ -1,4 +1,5 @@
-﻿using Cypisek.Models;
+﻿using AutoMapper;
+using Cypisek.Models;
 using Cypisek.Services;
 using Cypisek.ViewModels.MediaLibrary;
 using System;
@@ -11,31 +12,23 @@ namespace Cypisek.Controllers
 {
     public class MediaLibraryController : Controller
     {
-        private readonly IMediaFileService filesService;
         private readonly IMediaStorageService storageService;
 
-        public MediaLibraryController(IMediaFileService imfs, IMediaStorageService imss)
+        public MediaLibraryController(IMediaStorageService imss)
         {
-            this.filesService = imfs;
             this.storageService = imss;
         }
 
-        //public ActionResult Refresh()
-        //{
-        //    var dbfiles = filesService.GetMediaFiles();
-
-        //    foreach (MediaFile mf in dbfiles)
-        //    {
-
-        //    }
-
-        //    return View();
-        //}
+        public ActionResult Refresh()
+        {
+            storageService.RefreshFileDB();
+            return RedirectToAction("FileBrowser");
+        }
 
         // GET: MediaLibrary
         public ActionResult FileBrowser()
         {
-            var dbfiles = filesService.GetMediaFiles();
+            var dbfiles = storageService.GetMediaFiles();
 
             List<MediaFileViewModel> model = new List<MediaFileViewModel>();
 
@@ -73,54 +66,46 @@ namespace Cypisek.Controllers
             return RedirectToAction("FileBrowser");
         }
 
-        // GET: MediaLibrary/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: MediaLibrary/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
         // GET: MediaLibrary/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            var file = storageService.GetMediaFile(id);
+
+            if (file != null)
+            {
+                var model = Mapper.Map<MediaFile, MediaFileViewModel>(file);
+                var playlist = storageService.GetMediaFileSchedules(id);
+                model.ScheduleNames = playlist.Select(p => p.ClientSchedule.Name).ToList();
+
+                if (TempData["Message"] != null)
+                    ViewBag.Message = TempData["Message"];
+                return View(model);
+            }
+            else
+                return RedirectToAction("Index");
         }
 
         // POST: MediaLibrary/Delete/5
         [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
+        public ActionResult Delete(MediaFileViewModel model)
         {
             try
             {
-                // TODO: Add delete logic here
+                if (storageService.DeleteFile(model.ID))
+                    return RedirectToAction("FileBrowser");
+                else
+                {
+                    TempData["Message"] = "Nie można usunąć pliku, ponieważ jest on używany w harmonogramach";
+                    return RedirectToAction("Delete", new { id = model.ID });
+                }
 
-                return RedirectToAction("Index");
+
             }
             catch
             {
-                return View();
+                return View(model);
             }
         }
 
-        // GET: MediaLibrary/Details/5
-        //public ActionResult Details(int id)
-        //{
-        //    return View();
-        //}
     }
 }

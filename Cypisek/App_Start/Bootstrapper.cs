@@ -64,8 +64,9 @@ namespace Cypisek.App_Start
             //{
             //}
             //var service = scope.Resolve<IMediaStorageService>();
-            var service = DependencyResolver.Current.GetService<IMediaStorageService>();
-            service.RefreshFileDB();
+
+            //var service = DependencyResolver.Current.GetService<IMediaStorageService>();
+            //service.RefreshFileDB();
         }
 
         private static void SetAutoFacSignalrContatiner()

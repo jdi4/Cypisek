@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Campaign.cs" />
     <Compile Include="ClientGroup.cs" />
     <Compile Include="ClientSchedule.cs" />
     <Compile Include="ClientScheduleMediaFilesList.cs" />

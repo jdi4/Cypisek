@@ -15,10 +15,10 @@ namespace Cypisek.Models
 
         // FK
         public int? ClientGroupID { get; set; }
-        public int? ClientScheduleID { get; set; }
+        public int? CampaignID { get; set; }
 
         // Nav.properties
         public ClientGroup ClientGroup { get; set; }
-        public ClientSchedule ClientSchedule { get; set; }
+        public Campaign ClientCampaign { get; set; }
     }
 }

@@ -14,6 +14,7 @@ namespace Cypisek.Hubs
     public class ContentHub : Hub
     {
         private readonly IEndPlayerClientService endPlayerClientService;
+        private readonly IClientScheduleService clientScheduleService;
         private readonly static ConnectionMapping<int> _connections =
             new ConnectionMapping<int>();
 
@@ -30,6 +31,7 @@ namespace Cypisek.Hubs
 
             // Resolve dependencies from the hub lifetime scope.
             endPlayerClientService = _hubLifetimeScope.Resolve<IEndPlayerClientService>();
+            clientScheduleService = _hubLifetimeScope.Resolve<IClientScheduleService>();
         }
 
         public void PoorAuthenticate(string clientidstr)
@@ -43,12 +45,16 @@ namespace Cypisek.Hubs
                 client.IsConnected = true;
                 endPlayerClientService.EditEndPlayerClient(client);
                 endPlayerClientService.SaveEndPlayerClient();
-                Clients.Caller.confirm(true);
+                //Clients.Caller.confirm(true);
+
+                SendCurrentSchedule(client.CampaignID);
+
+
             }
-            else
-            {
-                Clients.Caller.confirm(false);
-            }
+            //else
+            //{
+            //    Clients.Caller.confirm(false);
+            //}
         }
 
         public void InvokeSending()
@@ -60,6 +66,14 @@ namespace Cypisek.Hubs
                 + clientid + "]";
 
             Clients.Caller.receiveData(data);
+        }
+
+        public void CheckSchedule()
+        {
+            string conid = Context.ConnectionId;
+            int clientid = _connections.GetUser(conid);
+            var client = endPlayerClientService.GetEndPlayerClient(clientid);
+            SendCurrentSchedule(client.CampaignID);
         }
 
         public override Task OnDisconnected(bool stopCalled)
@@ -84,6 +98,19 @@ namespace Cypisek.Hubs
         public static string GetClientConnection(int clientID)
         {
             return _connections.GetUserConnection(clientID);
+        }
+
+        private void SendCurrentSchedule(int? campaignId)
+        {
+            if (campaignId != null)
+            {
+                var schedule = clientScheduleService.GetCurrentSchedule((int)campaignId);
+                if (schedule != null)
+                {
+                    string message = clientScheduleService.GetScheduleAsString(schedule);
+                    Clients.Caller.test1(message);
+                }
+            }
         }
 
         protected override void Dispose(bool disposing)

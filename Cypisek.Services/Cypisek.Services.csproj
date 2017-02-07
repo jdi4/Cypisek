@@ -40,9 +40,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CampaignService.cs" />
     <Compile Include="ClientScheduleService.cs" />
     <Compile Include="ClientGroupService.cs" />
-    <Compile Include="MediaFileService.cs" />
     <Compile Include="EndPlayerClientService.cs" />
     <Compile Include="MediaStorageService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

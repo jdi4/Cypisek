@@ -27,14 +27,14 @@ namespace Cypisek.ViewModels
         public int ClientScheduleID { get; set; }
 
         public ClientGroup ClientGroup { get; set; }
-        public ClientSchedule ClientSchedule { get; set; }
+        public Campaign ClientCampaign { get; set; }
 
         // extra properties
 
-        [DisplayName("Harmonogram")]
-        public string ScheduleName
+        [DisplayName("Kampania")]
+        public string CampaignName
         {
-            get { return ClientSchedule.Name; }
+            get { return ClientCampaign.Name; }
         }
         public bool IsSelected { get; set; }
 
